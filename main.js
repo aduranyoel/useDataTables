@@ -40,6 +40,11 @@ AjaxUtil({
               },
             initComplete: function( settings, json ) {
                 $('div.loading').remove();
+              },
+            rowCallback: function( row, data ) {
+                if ( data.grade == "A" ) {
+                  $('td:eq(4)', row).html( '<b>A</b>' );
+                }
               }
         });
     }
