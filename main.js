@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var columns = ["ID", "NOMBRE", "USERNAME", "EMAIL", "WEBSITE", "PHONE"]
 var rows = [];
