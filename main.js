@@ -21,31 +21,49 @@ AjaxUtil({
             col: columns,
             rows: rows
         })
-
-
-        $('#tableContainer').DataTable({
-            autoWidth: true,
-            info: false,
-            lengthChange: false,
-            pageLength: 5,
-            ordering: true,
-            paging: true,
-            searching: false,
-            serverSide: false,
-            stateSave: false,
-            createdRow: function( row, data, dataIndex ) {
-                if ( data[4] == "A" ) {
-                  $(row).addClass( 'important' );
-                }
-              },
-            initComplete: function( settings, json ) {
-                $('div.loading').remove();
-              },
-            rowCallback: function( row, data ) {
-                if ( data.grade == "A" ) {
-                  $('td:eq(4)', row).html( '<b>A</b>' );
-                }
+        var opt = {
+          "autoWidth": true,
+          "info": false,
+          "lengthChange": false,
+          "lengthMenu": [ 10, 25, 50, 75, 100 ],
+          "paging": false,
+          "pageLength": 5,
+          "pagingType": "numbers",
+          "ordering": true,
+          "searching": false,
+          "serverSide": false,
+          "stateSave": false,
+          "scrollY": "",
+          "scrollX": "",
+          "scrollCollapse": true,
+          "responsive": true,
+          "colReorder": false,
+          "fixedHeader": false,
+          "columnDefs": [
+            //{ "orderable": false, "targets": 0 },
+            //{ "orderSequence": [ "desc" ], "targets": [ 1 ] },
+            //{ "orderData": [ 0, 1 ],    "targets": 0 }
+          ],
+          createdRow: function( row, data, dataIndex ) {
+              if ( data[4] == "A" ) {
+                $(row).addClass( 'important' );
               }
-        });
+            },
+          initComplete: function( settings, json ) {
+              $('div.loading').remove();
+            },
+          //   fixedColumns: {
+          //     leftColumns: 2
+          //   },
+          //   rowGroup: {
+          //     dataSrc: 'group'
+          //   },
+          //   "order": [[ 0, 'asc' ], [ 1, 'desc' ]]
+          //   "orderFixed": {
+          //     "pre": [[ 0, 'desc' ], [ 1, 'desc' ]]
+          //   }
+      }
+        $('#tableContainer').DataTable(opt);
+
     }
 })
