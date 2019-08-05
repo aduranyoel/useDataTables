@@ -5,6 +5,7 @@ function SoloCreaTabla(idTabla, options)
     options.col     = options.col || [];
     options.rows    = options.rows || [];
     options.class   = options.class || [];
+    options.foot    = options.foot || false;
     var tableElement = document.getElementById(idTabla);
     tableElement.innerHTML = "";
     if(options.class.length>0){
@@ -30,4 +31,15 @@ function SoloCreaTabla(idTabla, options)
         tbodyElement.appendChild(trElement);
     });
     tableElement.appendChild(tbodyElement);
+    if(options.foot){
+    var tfootElement = document.createElement("tfoot");
+    var trFootElement = document.createElement("tr");
+    options.col.forEach(function (e) {
+        var thElement = document.createElement("th");
+        thElement.innerHTML = e;
+        trFootElement.appendChild(thElement);
+    });
+    tfootElement.appendChild(trFootElement);
+    tableElement.appendChild(tfootElement);
+    }
 };
