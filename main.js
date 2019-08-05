@@ -50,16 +50,7 @@ $.extend( true, $.fn.dataTable.defaults, opt );
 var columns = ["ID", "NOMBRE", "USERNAME", "EMAIL", "WEBSITE", "PHONE", ""]
 var rows = [
   [
-    (Math.random()*9).toString().slice(0,5),
-    (Math.random()*9).toString().slice(0,5),
-    (Math.random()*9).toString().slice(0,5),
-    (Math.random()*9).toString().slice(0,5),
-    (Math.random()*9).toString().slice(0,5),
-    (Math.random()*9).toString().slice(0,5),
-    '<button class="delBtn">DEL</button>'
-  ],
-  [
-    (Math.random()*9).toString().slice(0,5),
+    parseInt((Math.random()*9)),
     (Math.random()*9).toString().slice(0,5),
     (Math.random()*9).toString().slice(0,5),
     (Math.random()*9).toString().slice(0,5),
@@ -68,7 +59,16 @@ var rows = [
     '<button class="delBtn">DEL</button>'
   ],
   [
+    parseInt((Math.random()*9)),
     (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    '<button class="delBtn">DEL</button>'
+  ],
+  [
+    parseInt((Math.random()*9)),
     (Math.random()*9).toString().slice(0,5),
     (Math.random()*9).toString().slice(0,5),
     (Math.random()*9).toString().slice(0,5),
@@ -85,14 +85,16 @@ var rows = [
 
         var table = $('#tableContainer').DataTable({
               columnDefs: [
-                {"targets": [0,6], "orderable": false}
+                {"targets": [6], "orderable": false}
               ],
               searching: true,
               dom: "t"
         });
+
+
         var trH = document.createElement("tr");
         $('#tableContainer thead th').each( function (i, e) {
-          if(i!==6){
+          if(i!==0 && i!==6){
             var tdH = document.createElement("td");
             var inputS = document.createElement("input");
             inputS.setAttribute("type", "text");
@@ -107,7 +109,13 @@ var rows = [
             tdH.style.borderBottom="none";
             trH.appendChild(tdH);
 
+          }else{
+            var tdH = document.createElement("td");
+            tdH.style.borderBottom="none";
+            tdH.style.width="10px";
+            trH.appendChild(tdH);
           }
+          
           
         })
       
@@ -131,7 +139,7 @@ var rows = [
         var btn = document.getElementById('btn');
         btn.onclick=function(){
           table.row.add([
-            (Math.random()*9).toString().slice(0,5),
+            parseInt((Math.random()*9)),
             (Math.random()*9).toString().slice(0,5),
             (Math.random()*9).toString().slice(0,5),
             (Math.random()*9).toString().slice(0,5),
