@@ -22,7 +22,8 @@ var opt = {
   // "columnDefs": [
   //   { "orderable": false, "targets": 0 },
   //   { "orderSequence": [ "desc" ], "targets": [ 1 ] },
-  //   { "orderData": [ 0, 1 ],    "targets": 0 }
+  //   { "orderData": [ 0, 1 ],    "targets": 0 },
+  //   { "searchable": false, "targets": 0 }
   // ]
   // createdRow: function( row, data, dataIndex ) {
   //     if ( data[4] == "A" ) {
@@ -46,16 +47,45 @@ var opt = {
 $.extend( true, $.fn.dataTable.defaults, opt );
 
 var columns = ["ID", "NOMBRE", "USERNAME", "EMAIL", "WEBSITE", "PHONE", ""]
-var rows = [];
+var rows = [
+  [
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    '<button class="delBtn">DEL</button>'
+  ],
+  [
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    '<button class="delBtn">DEL</button>'
+  ],
+  [
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    (Math.random()*9).toString().slice(0,5),
+    '<button class="delBtn">DEL</button>'
+  ]
+];
 
         SoloCreaTabla("tableContainer", {
             col: columns,
-            rows: rows
+            rows: rows,
+            foot: true
         })
 
-        $('#tableContainer tfoot th').each( function () {
+        $('#tableContainer tfoot th').each( function (i, e) {
           var title = $(this).text();
-          $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+          $(this).html( '<input type="text" id="inputCol_'+i+'" placeholder="'+title+'" />' );
       } );
 
 
@@ -65,22 +95,15 @@ var rows = [];
               ],
               searching: true
         });
+        $('#tableContainer tbody').on( 'click', 'button.delBtn', function () {
+          table
+              .row( $(this).parents('tr') )
+              .remove()
+              .draw();
+        });
         //ADD
         var btn = document.getElementById('btn');
         btn.onclick=function(){
-          // var bod = "'"+$("#tableContainer tbody").html()+"'"
-          // if(bod.indexOf("No data")>-1){
-          //   $("#tableContainer tbody").html("");
-          // }
-          // $('#tableContainer tbody').append('<tr>'+
-          //   '<td>'+(Math.random()*9).toString().slice(0,5)+'</td>'+
-          //   '<td>'+(Math.random()*9).toString().slice(0,5)+'</td>'+
-          //   '<td>'+(Math.random()*9).toString().slice(0,5)+'</td>'+
-          //   '<td>'+(Math.random()*9).toString().slice(0,5)+'</td>'+
-          //   '<td>'+(Math.random()*9).toString().slice(0,5)+'</td>'+
-          //   '<td>'+(Math.random()*9).toString().slice(0,5)+'</td>'+
-          //   '<td><button class="delBtn">DEL</button></td>'
-          // )
           table.row.add([
             (Math.random()*9).toString().slice(0,5),
             (Math.random()*9).toString().slice(0,5),
@@ -90,25 +113,23 @@ var rows = [];
             (Math.random()*9).toString().slice(0,5),
             '<button class="delBtn">DEL</button>'
           ]).draw();
-          //remove
-          $('.delBtn').off();
-          $('.delBtn').on('click',function () {
-            var este = this;
-            este.parentNode.parentNode.parentNode.removeChild(este.parentNode.parentNode)
+          //DEL
+          $('#tableContainer tbody').off();
+          $('#tableContainer tbody').on( 'click', 'button.delBtn', function () {
+            table
+                .row( $(this).parents('tr') )
+                .remove()
+                .draw();
           });
         }
 
         //SEARCH COLUMN
-        table.columns().every( function () {
-          var that = this;
-
-          $( 'input', this.footer() ).on( 'keyup', function () {
-            console.log("OK")
-              if ( that.search() !== this.value ) {
-                  that
-                      .search( this.value )
-                      .draw();
-              }
-          } );
+        table.columns().every( function (i, e) {
+          $('#inputCol_'+i).on( 'keyup', function () {
+            table
+                .columns( i )
+                .search( this.value )
+                .draw();
+        } );
       } );
 
