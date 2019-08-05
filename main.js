@@ -18,6 +18,7 @@ var opt = {
   "responsive": true,
   "colReorder": false,
   "fixedHeader": false,
+  "dom": "lfrtip"
   //"rowId": "id",
   // "columnDefs": [
   //   { "orderable": false, "targets": 0 },
@@ -79,22 +80,47 @@ var rows = [
 
         SoloCreaTabla("tableContainer", {
             col: columns,
-            rows: rows,
-            foot: true
+            rows: rows
         })
-
-        $('#tableContainer tfoot th').each( function (i, e) {
-          var title = $(this).text();
-          $(this).html( '<input type="text" id="inputCol_'+i+'" placeholder="'+title+'" />' );
-      } );
-
 
         var table = $('#tableContainer').DataTable({
               columnDefs: [
                 {"targets": [0,6], "orderable": false}
               ],
-              searching: true
+              searching: true,
+              dom: "t"
         });
+        var trH = document.createElement("tr");
+        $('#tableContainer thead th').each( function (i, e) {
+          if(i!==6){
+            var tdH = document.createElement("td");
+            var inputS = document.createElement("input");
+            inputS.setAttribute("type", "text");
+            inputS.setAttribute("id", "inputCol_"+i);
+            inputS.onkeyup=function(){
+              table
+                  .columns( i )
+                  .search( this.value )
+                  .draw();
+            }
+            tdH.appendChild(inputS);
+            tdH.style.borderBottom="none";
+            trH.appendChild(tdH);
+
+          }
+          
+        })
+      
+
+        $('#tableContainer thead').append(trH)
+        
+      //   $('#tableContainer thead th').each( function (i, e) {
+      //     // console.log($(this).parents('thead')[0].childNodes)
+      //     // $(this).parents('thead')[0].append("hola")
+      //     // var title = $(this).text();
+      //     // $(this).html( '<input type="text" id="inputCol_'+i+'" placeholder="'+title+'" />' );
+      // } );
+
         $('#tableContainer tbody').on( 'click', 'button.delBtn', function () {
           table
               .row( $(this).parents('tr') )
@@ -124,12 +150,12 @@ var rows = [
         }
 
         //SEARCH COLUMN
-        table.columns().every( function (i, e) {
-          $('#inputCol_'+i).on( 'keyup', function () {
-            table
-                .columns( i )
-                .search( this.value )
-                .draw();
-        } );
-      } );
+      //   table.columns().every( function (i, e) {
+      //     $('#inputCol_'+i).on( 'keyup', function () {
+      //       table
+      //           .columns( i )
+      //           .search( this.value )
+      //           .draw();
+      //   } );
+      // } );
 
