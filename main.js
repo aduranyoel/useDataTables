@@ -167,3 +167,13 @@ var rows = [
       //   } );
       // } );
 
+
+      function getData(selector){
+        var dataEleObj = $(selector).DataTable().rows().data();
+        var arrRes = [];
+        for (var i = 0, len = dataEleObj.length; i<len ; i++){
+        arrRes.push(dataEleObj[i]);
+        }
+        return arrRes;
+        }
+        
