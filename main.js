@@ -1,5 +1,3 @@
-'use strict';
-
 var opt = {
   "autoWidth": true,
   "info": false,
@@ -45,7 +43,7 @@ var opt = {
   //     "pre": [[ 0, 'desc' ], [ 1, 'desc' ]]
   //   }
 }
-$.extend( true, $.fn.dataTable.defaults, opt );
+//$.extend( true, $.fn.dataTable.defaults, opt );
 
 var columns = ["ID", "NOMBRE", "USERNAME", "EMAIL", "WEBSITE", "PHONE", ""]
 var rows = [
@@ -83,90 +81,60 @@ var rows = [
             rows: rows
         })
 
-        var table = $('#tableContainer').DataTable({
-              columnDefs: [
-                {"targets": [6], "orderable": false}
-              ],
-              searching: true,
-              dom: "t"
-        });
-
-
-        var trH = document.createElement("tr");
-        $('#tableContainer thead th').each( function (i, e) {
-          if(i!==0 && i!==6){
-            var tdH = document.createElement("td");
-            var inputS = document.createElement("input");
-            inputS.setAttribute("type", "text");
-            inputS.setAttribute("id", "inputCol_"+i);
-            inputS.onkeyup=function(){
-              table
-                  .columns( i )
-                  .search( this.value )
-                  .draw();
-            }
-            tdH.appendChild(inputS);
-            tdH.style.borderBottom="none";
-            trH.appendChild(tdH);
-
-          }else{
-            var tdH = document.createElement("td");
-            tdH.style.borderBottom="none";
-            tdH.style.width="10px";
-            trH.appendChild(tdH);
+ $.fn.useDataTable = function(action, param, options){
+          var thas = this[0];
+          action = action || '';
+          param = param || '';
+          options = options || {};
+          if (typeof action === "object") options = action;
+          if (typeof param === "object") options = param;
+          var defaults = {
+            "autoWidth": true,
+            "info": false,
+            "lengthChange": false,
+            "lengthMenu": [ 10, 25, 50, 75, 100 ],
+            "paging": false,
+            "pageLength": 5,
+            "pagingType": "numbers",
+            "ordering": true,
+            "searching": true,
+            "serverSide": false,
+            //"stateSave": false,
+            "scrollY": "",
+            "scrollX": "",
+            "scrollCollapse": true,
+            "responsive": true,
+            "colReorder": false,
+            "fixedHeader": false,
+            "destroy": true
           }
-          
-          
-        })
-      
+          var settings = $.extend({}, defaults, options);
 
-        $('#tableContainer thead').append(trH)
-        
-      //   $('#tableContainer thead th').each( function (i, e) {
-      //     // console.log($(this).parents('thead')[0].childNodes)
-      //     // $(this).parents('thead')[0].append("hola")
-      //     // var title = $(this).text();
-      //     // $(this).html( '<input type="text" id="inputCol_'+i+'" placeholder="'+title+'" />' );
-      // } );
-
-        $('#tableContainer tbody').on( 'click', 'button.delBtn', function () {
-          table
-              .row( $(this).parents('tr') )
+          if (action === "draw"){
+          $(thas).DataTable(settings)
+          }
+          if (action === "data"){
+            return $(thas).DataTable().data()
+          }
+          if (action === "delRow"){
+            $(thas).DataTable()
+              .row(param)
               .remove()
               .draw();
-        });
-        //ADD
-        var btn = document.getElementById('btn');
-        btn.onclick=function(){
-          table.row.add([
-            parseInt((Math.random()*9)),
-            (Math.random()*9).toString().slice(0,5),
-            (Math.random()*9).toString().slice(0,5),
-            (Math.random()*9).toString().slice(0,5),
-            (Math.random()*9).toString().slice(0,5),
-            (Math.random()*9).toString().slice(0,5),
-            '<button class="delBtn">DEL</button>'
-          ]).draw();
-          //DEL
-          $('#tableContainer tbody').off();
-          $('#tableContainer tbody').on( 'click', 'button.delBtn', function () {
-            table
-                .row( $(this).parents('tr') )
-                .remove()
-                .draw();
-          });
+          }
+          if (action === "addRow"){
+            $(thas).DataTable().row.add(param).draw();
+          }
+          
+
+
+          
+          
         }
 
-        //SEARCH COLUMN
-      //   table.columns().every( function (i, e) {
-      //     $('#inputCol_'+i).on( 'keyup', function () {
-      //       table
-      //           .columns( i )
-      //           .search( this.value )
-      //           .draw();
-      //   } );
-      // } );
-
+        $('#tableContainer').useDataTable('draw', {
+          info: true
+        })
 
       function getData(selector){
         var dataEleObj = $(selector).DataTable().rows().data();
