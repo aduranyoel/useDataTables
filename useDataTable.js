@@ -1,6 +1,8 @@
 (function ($) {
     'use strict';
+    if ($ === undefined) throw new Error('NO SE ENCUENTRA "window.jQuery" PUEDE DESCARGARLO EN "https://jquery.com/"')
     $.fn.useDataTable = function (action, param, options) {
+        if ($.fn.DataTable === undefined) throw new Error('NO SE ENCUENTRA "$.fn.DataTable". PUEDE DESCARGARLO EN "https://datatables.net/"')
         var thas = this[0];
         action = action || '';
         param = param || '';
@@ -43,15 +45,24 @@
                 }
             }
         };
-        var settings = $.extend({}, defaults, options);
+        var optionsResult = $.extend({}, options,{
+            "createdRow": function( row, data, dataIndex ) {
+                $(row).attr('data-idrow', dataIndex);
+                options.createdRow = options.createdRow || new Function;
+                if (typeof options.createdRow === "function") options.createdRow(row, data, dataIndex);
+              }
+        })
+        var settings = $.extend({}, defaults, optionsResult);
         function draw(settings) {
             $(thas).DataTable(settings);
         }
         function delRow(idRow) {
-            $(thas).DataTable()
-                .row(idRow)
-                .remove()
-                .draw();
+            if (idRow !== ''){
+                $(thas).DataTable()
+                    .row(idRow)
+                    .remove()
+                    .draw();
+            }
         }
         function addRow(arrRow) {
             if (Array.isArray(arrRow)){
@@ -67,16 +78,19 @@
                 }
                 return arrRes;
             }else{
-                return $(thas).DataTable().row(idRow).data();
+                if (typeof idRow === "string" || typeof idRow === "number"){
+                    return $(thas).DataTable().row(idRow).data();
+                }
             }
         }
-        options.selection = options.selection || {};
-        if (options.selection.enabled === true) {
+        options.use = options.use || {};
+        options.use.selection = options.use.selection || {};
+        if (options.use.selection.enabled === true) {
             $(thas).on('click', 'tr', function () {
                 var row = $(thas).DataTable().row(this);
                 var data = row.data();
                 var index = row.index();
-                if (typeof options.selection.callback === "function") options.selection.callback(row, data, index);
+                if (typeof options.use.selection.callback === "function") options.use.selection.callback(row, data, index);
             });
             $(thas).on('mouseenter', 'tr', function () {
                 this.style.backgroundColor = 'rgb(246, 246, 246)';
@@ -102,4 +116,4 @@
                 return draw(settings);
         }
     };
-})(jQuery);
+})(window.jQuery);
