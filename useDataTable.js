@@ -83,6 +83,27 @@
                 }
             }
         }
+        function columnTotal(idCol){
+            if (idCol === undefined || idCol === ''){
+                
+            }else{
+                var dataCol = $(thas).DataTable().columns(idCol).data();
+                var arrDataCol = [];
+                for (var i = 0, len = dataCol.length; i < len; i++) {
+                    arrDataCol.push(dataCol[i]);
+                }
+                console.log(arrDataCol)
+                var result = 0;
+                for (var i = 0, len = arrDataCol[0].length; i < len; i++){
+                    var current = 0;
+                    current = Number.parseFloat(arrDataCol[0][i]);
+                    if (isNaN(current)) current = 0;
+                    result += current;  
+                }
+                result += '';
+                return Number.parseFloat(result.slice(0, result.indexOf('.')+3));
+            }
+        }
         options.use = options.use || {};
         options.use.selection = options.use.selection || {};
         if (options.use.selection.enabled === true) {
@@ -112,6 +133,9 @@
                 return delRow(param);
             case "addRow":
                 return addRow(param);
+            case "totalCol":
+                return columnTotal(param);
+            
             default:
                 return draw(settings);
         }
