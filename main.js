@@ -39,14 +39,14 @@ var rows = [
         ],
           data: rows,
           info: true,
-          use: {
-            selection: {
-              enabled: false,
-              callback: function(row, data, index){
-                console.log(row);
-              }
-            }
-          }
+          // use: {
+          //   selection: {
+          //     enabled: true,
+          //     callback: function(row, data, index){
+          //       console.log(row);
+          //     }
+          //   }
+          // }
         })
 
         // $('#tableContainer').useDataTable('addRow', ['asd', 'asd', 'asd', 'asd', 'asd', 'asd'])

@@ -57,9 +57,10 @@
             $(thas).DataTable(settings);
         }
         function delRow(idRow) {
-            if (idRow !== ''){
+            var row = Number.parseInt(idRow);
+            if (!isNaN(row)){
                 $(thas).DataTable()
-                    .row(idRow)
+                    .row(row)
                     .remove()
                     .draw();
             }
@@ -70,7 +71,8 @@
             }
         }
         function getData(idRow) {
-            if (idRow === undefined || idRow === ''){
+            var row = Number.parseInt(idRow);
+            if (isNaN(row)){
                 var dataEleObj = $(thas).DataTable().rows().data();
                 var arrRes = [];
                 for (var i = 0, len = dataEleObj.length; i < len; i++) {
@@ -78,21 +80,18 @@
                 }
                 return arrRes;
             }else{
-                if (typeof idRow === "string" || typeof idRow === "number"){
-                    return $(thas).DataTable().row(idRow).data();
-                }
+                return $(thas).DataTable().row(row).data();
             }
         }
         function columnTotal(idCol){
-            if (idCol === undefined || idCol === ''){
-                
-            }else{
-                var dataCol = $(thas).DataTable().columns(idCol).data();
-                var arrDataCol = [];
+            var col = Number.parseInt(idCol);
+            var lenCols = $(thas).DataTable().columns()[0].length;
+            function suma(currentId){
+                var dataCol = $(thas).DataTable().columns(currentId).data();
+                var arrDataCol = new Array;
                 for (var i = 0, len = dataCol.length; i < len; i++) {
                     arrDataCol.push(dataCol[i]);
                 }
-                console.log(arrDataCol)
                 var result = 0;
                 for (var i = 0, len = arrDataCol[0].length; i < len; i++){
                     var current = 0;
@@ -100,18 +99,73 @@
                     if (isNaN(current)) current = 0;
                     result += current;  
                 }
-                result += '';
-                return Number.parseFloat(result.slice(0, result.indexOf('.')+3));
+                return result;
+            }
+            if (!Number.isNaN(col) && col < lenCols){
+                var sum = suma(col);
+                sum = Number.parseFloat(sum).toFixed(3);
+                if (sum < 10) sum = '0' + sum;
+                return sum;
+            }else{
+                var arrSum = new Array;
+                for (var i = 0; i < lenCols; i++ ){
+                    var sum = suma(i);
+                    sum = Number.parseFloat(sum).toFixed(3);
+                    if (sum < 10) sum = '0' + sum;
+                    arrSum.push(sum);
+                }
+                return arrSum;
             }
         }
-        options.use = options.use || {};
-        options.use.selection = options.use.selection || {};
-        if (options.use.selection.enabled === true) {
+        function rowTotal(idRow){
+            var row = Number.parseInt(idRow);
+            var lenRows = $(thas).DataTable().rows()[0].length;
+            function suma(currentId){
+                var dataRow = $(thas).DataTable().rows(currentId).data();
+                var arrDataRow = new Array;
+                for (var i = 0, len = dataRow.length; i < len; i++) {
+                    arrDataRow.push(dataRow[i]);
+                }
+                var result = 0;
+                for (var i = 0, len = arrDataRow[0].length; i < len; i++){
+                    var current = 0;
+                    current = Number.parseFloat(arrDataRow[0][i]);
+                    if (isNaN(current)) current = 0;
+                    result += current;  
+                }
+                return result;
+            }
+            if (!Number.isNaN(row) && row < lenRows){
+                var sum = suma(row);
+                sum = Number.parseFloat(sum).toFixed(3);
+                if (sum < 10) sum = '0' + sum;
+                return sum;
+            }else{
+                var arrSum = new Array;
+                for (var i = 0; i < lenRows; i++ ){
+                    var sum = suma(i);
+                    sum = Number.parseFloat(sum).toFixed(3);
+                    if (sum < 10) sum = '0' + sum;
+                    arrSum.push(sum);
+                }
+                return arrSum;
+            }
+        }
+        function clear(){
+            $(thas).DataTable().clear().draw();
+        }
+        var useOptions = $.extend({}, {
+            selection: {
+                enabled: false,
+                callback: new Function
+            }
+        }, options.use ? options.use : {})
+        if (useOptions.selection.enabled === true) {
             $(thas).on('click', 'tr', function () {
                 var row = $(thas).DataTable().row(this);
                 var data = row.data();
                 var index = row.index();
-                if (typeof options.use.selection.callback === "function") options.use.selection.callback(row, data, index);
+                if (typeof useOptions.selection.callback === "function") useOptions.selection.callback(row, data, index);
             });
             $(thas).on('mouseenter', 'tr', function () {
                 this.style.backgroundColor = 'rgb(246, 246, 246)';
@@ -124,9 +178,24 @@
             });
         }
 
+        function help(){
+            var content = '\n'+
+            'help     (): Muestra esta ayuda\n'+
+            'draw     (settings?: object): Dibuja el DataTable\n'+
+            'data     (idRow?: string || number): Retorna datos de la(s) fila(s)\n'+
+            'empty    (): Elimina todas las filas\n'+
+            'addRow   (arrRow: array): Agrega un fila\n'+
+            'delRow   (idRow: string || number): Elimina la fila seleccionada\n'+
+            'totalCol (idCol?: string || number): Retorna sumatoria de columna(s)\n'+
+            'totalRow (idRow?: string || number): Retorna sumatoria de fila(s)\n'
+            return content;
+        }
+
         switch (action) {
+            case "help":
+                return help();
             case "draw":
-                return draw(settings);
+                return draw(settings);    
             case "data":
                 return getData(param);
             case "delRow":
@@ -135,7 +204,10 @@
                 return addRow(param);
             case "totalCol":
                 return columnTotal(param);
-            
+            case "totalRow":
+                return rowTotal(param);
+            case "empty":
+                return clear();    
             default:
                 return draw(settings);
         }
