@@ -104,14 +104,14 @@
             if (!Number.isNaN(col) && col < lenCols){
                 var sum = suma(col);
                 sum = Number.parseFloat(sum).toFixed(3);
-                if (sum < 10) sum = '0' + sum;
+                //if (sum < 10) sum = '0' + sum;
                 return sum;
             }else{
                 var arrSum = new Array;
                 for (var i = 0; i < lenCols; i++ ){
                     var sum = suma(i);
                     sum = Number.parseFloat(sum).toFixed(3);
-                    if (sum < 10) sum = '0' + sum;
+                    //if (sum < 10) sum = '0' + sum;
                     arrSum.push(sum);
                 }
                 return arrSum;
@@ -138,14 +138,14 @@
             if (!Number.isNaN(row) && row < lenRows){
                 var sum = suma(row);
                 sum = Number.parseFloat(sum).toFixed(3);
-                if (sum < 10) sum = '0' + sum;
+                //if (sum < 10) sum = '0' + sum;
                 return sum;
             }else{
                 var arrSum = new Array;
                 for (var i = 0; i < lenRows; i++ ){
                     var sum = suma(i);
                     sum = Number.parseFloat(sum).toFixed(3);
-                    if (sum < 10) sum = '0' + sum;
+                    //if (sum < 10) sum = '0' + sum;
                     arrSum.push(sum);
                 }
                 return arrSum;

@@ -39,6 +39,10 @@ var rows = [
         ],
           data: rows,
           info: true,
+          "dom": "lf<'test'>rtip",
+          initComplete: function(){
+            $('div.test').html('Custom tool bar!');
+          }
           // use: {
           //   selection: {
           //     enabled: true,
@@ -55,4 +59,10 @@ var rows = [
         // console.log(allDataResult)
         // var dataResult = $('#tableContainer').useDataTable('data', '1')
         // console.log(dataResult)
-        
+        var myTable = $('#tableContainer').DataTable();
+ 
+        $('#tableContainer').on( 'click', 'tbody td', function () {
+            myTable.cell( this ).edit( {
+                blur: 'submit'
+            } );
+        } );
