@@ -23,7 +23,7 @@
             "responsive": true,
             "colReorder": false,
             "fixedHeader": false,
-            "dom": "lfrtip",
+            "dom": "lfr<'usedatatable-header'>t<'usedatatable-footer'>ip",
             "selection": false,
             "bPaginate": false,
             "paging": false,
@@ -49,8 +49,13 @@
             "createdRow": function( row, data, dataIndex ) {
                 $(row).attr('data-idrow', dataIndex);
                 options.createdRow = options.createdRow || new Function;
-                if (typeof options.createdRow === "function") options.createdRow(row, data, dataIndex);
-              }
+                if (typeof options.createdRow === "function") options.createdRow.call(this, row, data, dataIndex);
+              },
+            "initComplete": function(settings, json){
+
+            options.initComplete = options.initComplete || new Function;
+            if (typeof options.initComplete === "function") options.initComplete.call(this, settings, json);
+            }
         })
         var settings = $.extend({}, defaults, optionsResult);
         function draw(settings) {
@@ -88,14 +93,10 @@
             var lenCols = $(thas).DataTable().columns()[0].length;
             function suma(currentId){
                 var dataCol = $(thas).DataTable().columns(currentId).data();
-                var arrDataCol = new Array;
-                for (var i = 0, len = dataCol.length; i < len; i++) {
-                    arrDataCol.push(dataCol[i]);
-                }
                 var result = 0;
-                for (var i = 0, len = arrDataCol[0].length; i < len; i++){
+                for (var i = 0, len = dataCol[0].length; i < len; i++){
                     var current = 0;
-                    current = Number.parseFloat(arrDataCol[0][i]);
+                    current = Number.parseFloat(dataCol[0][i]);
                     if (isNaN(current)) current = 0;
                     result += current;  
                 }
@@ -122,14 +123,10 @@
             var lenRows = $(thas).DataTable().rows()[0].length;
             function suma(currentId){
                 var dataRow = $(thas).DataTable().rows(currentId).data();
-                var arrDataRow = new Array;
-                for (var i = 0, len = dataRow.length; i < len; i++) {
-                    arrDataRow.push(dataRow[i]);
-                }
                 var result = 0;
-                for (var i = 0, len = arrDataRow[0].length; i < len; i++){
+                for (var i = 0, len = dataRow[0].length; i < len; i++){
                     var current = 0;
-                    current = Number.parseFloat(arrDataRow[0][i]);
+                    current = Number.parseFloat(dataRow[0][i]);
                     if (isNaN(current)) current = 0;
                     result += current;  
                 }
@@ -165,16 +162,16 @@
                 var row = $(thas).DataTable().row(this);
                 var data = row.data();
                 var index = row.index();
-                if (typeof useOptions.selection.callback === "function") useOptions.selection.callback(row, data, index);
+                if (typeof useOptions.selection.callback === "function") useOptions.selection.callback.call(this, row, data, index);
             });
             $(thas).on('mouseenter', 'tr', function () {
                 this.style.backgroundColor = 'rgb(246, 246, 246)';
-                this.style.cursor = 'pointer';
+                //this.style.cursor = 'pointer';
 
             });
             $(thas).on('mouseleave', 'tr', function () {
                 this.style.backgroundColor = '#fff';
-                this.style.cursor = 'default';
+                //this.style.cursor = 'default';
             });
         }
 

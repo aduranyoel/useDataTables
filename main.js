@@ -2,7 +2,7 @@ var rows = [
   [
     parseInt((Math.random()*9)),
     (Math.random()*9).toString().slice(0,5),
-    '<button>DEL</button>',
+    '<button id="mnb">DEL</button>',
     '<p>asdasddas</p>',
     (Math.random()*9).toString().slice(0,5),
     (Math.random()*9).toString().slice(0,5),
@@ -37,20 +37,20 @@ var rows = [
             {title: 'WEBSITE'},
             {title: 'PHONE'}
         ],
+        rowGroup: true,
           data: rows,
           info: true,
-          "dom": "lf<'test'>rtip",
           initComplete: function(){
-            $('div.test').html('Custom tool bar!');
+
+          },
+          use: {
+            selection: {
+              enabled: true,
+              callback: function(row, data, index){
+                $(this).toggleClass('action')
+              }
+            }
           }
-          // use: {
-          //   selection: {
-          //     enabled: true,
-          //     callback: function(row, data, index){
-          //       console.log(row);
-          //     }
-          //   }
-          // }
         })
 
         // $('#tableContainer').useDataTable('addRow', ['asd', 'asd', 'asd', 'asd', 'asd', 'asd'])
@@ -59,10 +59,9 @@ var rows = [
         // console.log(allDataResult)
         // var dataResult = $('#tableContainer').useDataTable('data', '1')
         // console.log(dataResult)
-        var myTable = $('#tableContainer').DataTable();
+        // var myTable = $('#tableContainer').DataTable();
  
-        $('#tableContainer').on( 'click', 'tbody td', function () {
-            myTable.cell( this ).edit( {
-                blur: 'submit'
-            } );
-        } );
+        // $('#tableContainer').on( 'click', 'tbody td', function () {
+        //     myTable.cell( this ).edit( 'bubble' );
+        // } );
+        /* Init DataTables */
