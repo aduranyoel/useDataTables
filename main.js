@@ -31,7 +31,7 @@ var rows = [
         $('#tableContainer').useDataTable({
           columns: [
             {title: 'ID'},
-            {title: 'NOMBRE'},
+            {title: 'NOMBRE', },
             {title: 'USERNAME'},
             {title: 'EMAIL'},
             {title: 'WEBSITE'},
@@ -39,16 +39,20 @@ var rows = [
         ],
           data: rows,
           info: true,
-          initComplete: function(){
+          initComplete: function(settings, json){
             $('#mnb').on('click', function(){console.log('mnb')})
+
           },
           use: {
             selection: {
               enabled: true,
-              cursor: 'pointer',
               callback: function(row, data, index){
                 console.log(row)
               }
+            },
+            filter: {
+              enabled: true,
+              targets: [1,2]
             }
           }
         })
