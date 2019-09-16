@@ -37,17 +37,16 @@ var rows = [
             {title: 'WEBSITE'},
             {title: 'PHONE'}
         ],
-        rowGroup: true,
           data: rows,
           info: true,
           initComplete: function(){
-
+            $('#mnb').on('click', function(){console.log('mnb')})
           },
           use: {
             selection: {
               enabled: true,
               callback: function(row, data, index){
-                $(this).toggleClass('action')
+                console.log(row)
               }
             }
           }

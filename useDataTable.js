@@ -61,13 +61,13 @@
         function draw(settings) {
             $(thas).DataTable(settings);
         }
+        function redraw() {
+            $(thas).DataTable().draw();
+        }
         function delRow(idRow) {
             var row = Number.parseInt(idRow);
             if (!isNaN(row)){
-                $(thas).DataTable()
-                    .row(row)
-                    .remove()
-                    .draw();
+                $(thas).DataTable().row(row).remove().draw();
             }
         }
         function addRow(arrRow) {
@@ -88,32 +88,24 @@
                 return $(thas).DataTable().row(row).data();
             }
         }
+        function suma(data){
+            return data.reduce(function(a, b){
+                var acumulador = Number.parseFloat(a) || 0;
+                var actual = Number.parseFloat(b) || 0;
+                return acumulador + actual;
+            })
+        }
         function columnTotal(idCol){
             var col = Number.parseInt(idCol);
             var lenCols = $(thas).DataTable().columns()[0].length;
-            function suma(currentId){
-                var dataCol = $(thas).DataTable().columns(currentId).data();
-                var result = 0;
-                for (var i = 0, len = dataCol[0].length; i < len; i++){
-                    var current = 0;
-                    current = Number.parseFloat(dataCol[0][i]);
-                    if (isNaN(current)) current = 0;
-                    result += current;  
-                }
-                return result;
-            }
             if (!Number.isNaN(col) && col < lenCols){
-                var sum = suma(col);
-                sum = Number.parseFloat(sum).toFixed(3);
-                //if (sum < 10) sum = '0' + sum;
-                return sum;
+                var dataCol = $(thas).DataTable().columns(col).data()[0];
+                return Number.parseFloat(suma(dataCol)).toFixed(3);
             }else{
                 var arrSum = new Array;
                 for (var i = 0; i < lenCols; i++ ){
-                    var sum = suma(i);
-                    sum = Number.parseFloat(sum).toFixed(3);
-                    //if (sum < 10) sum = '0' + sum;
-                    arrSum.push(sum);
+                    var dataCol = $(thas).DataTable().columns(i).data()[0];
+                    arrSum.push(Number.parseFloat(suma(dataCol)).toFixed(3));
                 }
                 return arrSum;
             }
@@ -121,29 +113,14 @@
         function rowTotal(idRow){
             var row = Number.parseInt(idRow);
             var lenRows = $(thas).DataTable().rows()[0].length;
-            function suma(currentId){
-                var dataRow = $(thas).DataTable().rows(currentId).data();
-                var result = 0;
-                for (var i = 0, len = dataRow[0].length; i < len; i++){
-                    var current = 0;
-                    current = Number.parseFloat(dataRow[0][i]);
-                    if (isNaN(current)) current = 0;
-                    result += current;  
-                }
-                return result;
-            }
             if (!Number.isNaN(row) && row < lenRows){
-                var sum = suma(row);
-                sum = Number.parseFloat(sum).toFixed(3);
-                //if (sum < 10) sum = '0' + sum;
-                return sum;
+                var dataRow = $(thas).DataTable().rows(row).data()[0];
+                return Number.parseFloat(suma(dataRow)).toFixed(3);
             }else{
                 var arrSum = new Array;
                 for (var i = 0; i < lenRows; i++ ){
-                    var sum = suma(i);
-                    sum = Number.parseFloat(sum).toFixed(3);
-                    //if (sum < 10) sum = '0' + sum;
-                    arrSum.push(sum);
+                    var dataRow = $(thas).DataTable().rows(i).data()[0];
+                    arrSum.push(Number.parseFloat(suma(dataRow)).toFixed(3));
                 }
                 return arrSum;
             }
@@ -154,11 +131,13 @@
         var useOptions = $.extend({}, {
             selection: {
                 enabled: false,
+                type: 'click',
                 callback: new Function
             }
         }, options.use ? options.use : {})
         if (useOptions.selection.enabled === true) {
-            $(thas).on('click', 'tr', function () {
+            useOptions.selection.type = useOptions.selection.type || 'click';
+            $(thas).on(useOptions.selection.type, 'tr', function () {
                 var row = $(thas).DataTable().row(this);
                 var data = row.data();
                 var index = row.index();
@@ -167,7 +146,6 @@
             $(thas).on('mouseenter', 'tr', function () {
                 this.style.backgroundColor = 'rgb(246, 246, 246)';
                 //this.style.cursor = 'pointer';
-
             });
             $(thas).on('mouseleave', 'tr', function () {
                 this.style.backgroundColor = '#fff';
@@ -176,23 +154,39 @@
         }
 
         function help(){
-            var content = '\n'+
+            return '\n'+
+            'Metodos:\n\n'+
             'help     (): Muestra esta ayuda\n'+
-            'draw     (settings?: object): Dibuja el DataTable\n'+
+            'draw     (settings?: object): Dibuja el DataTable (default)\n'+
             'data     (idRow?: string || number): Retorna datos de la(s) fila(s)\n'+
             'empty    (): Elimina todas las filas\n'+
+            'redraw   (): Redibuja el DataTable\n'+
             'addRow   (arrRow: array): Agrega un fila\n'+
             'delRow   (idRow: string || number): Elimina la fila seleccionada\n'+
             'totalCol (idCol?: string || number): Retorna sumatoria de columna(s)\n'+
-            'totalRow (idRow?: string || number): Retorna sumatoria de fila(s)\n'
-            return content;
+            'totalRow (idRow?: string || number): Retorna sumatoria de fila(s)\n\n'+
+            'Settings:\n'+
+            '...\n'+
+            'use: {\n'+
+            '    ...                                     // Oppciones de useDataTable\n'+
+            '}\n'+
+            '...\n\n'+
+            'selection: {\n'+
+            '    enabled: true,                          // On/Off selection\n'+
+            '    type: "click",                          // Evento? (default: "click")\n'+
+            '    callback: function(row, data, index){   // Accion del evento\n'+
+            '\n'+
+            '    }\n'+
+            '}\n'
         }
 
         switch (action) {
             case "help":
                 return help();
             case "draw":
-                return draw(settings);    
+                return draw(settings);
+            case "redraw":
+                return redraw();
             case "data":
                 return getData(param);
             case "delRow":
