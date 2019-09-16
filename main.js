@@ -45,6 +45,7 @@ var rows = [
           use: {
             selection: {
               enabled: true,
+              cursor: 'pointer',
               callback: function(row, data, index){
                 console.log(row)
               }

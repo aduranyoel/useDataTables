@@ -90,22 +90,20 @@
         }
         function suma(data){
             return data.reduce(function(a, b){
-                var acumulador = Number.parseFloat(a) || 0;
-                var actual = Number.parseFloat(b) || 0;
-                return acumulador + actual;
+                a = Number.parseFloat(a) || 0;
+                b = Number.parseFloat(b) || 0;
+                return a + b;
             })
         }
         function columnTotal(idCol){
             var col = Number.parseInt(idCol);
             var lenCols = $(thas).DataTable().columns()[0].length;
             if (!Number.isNaN(col) && col < lenCols){
-                var dataCol = $(thas).DataTable().columns(col).data()[0];
-                return Number.parseFloat(suma(dataCol)).toFixed(3);
+                return Number.parseFloat(suma($(thas).DataTable().columns(col).data()[0])).toFixed(3);
             }else{
                 var arrSum = new Array;
                 for (var i = 0; i < lenCols; i++ ){
-                    var dataCol = $(thas).DataTable().columns(i).data()[0];
-                    arrSum.push(Number.parseFloat(suma(dataCol)).toFixed(3));
+                    arrSum.push(Number.parseFloat(suma($(thas).DataTable().columns(i).data()[0])).toFixed(3));
                 }
                 return arrSum;
             }
@@ -114,13 +112,11 @@
             var row = Number.parseInt(idRow);
             var lenRows = $(thas).DataTable().rows()[0].length;
             if (!Number.isNaN(row) && row < lenRows){
-                var dataRow = $(thas).DataTable().rows(row).data()[0];
-                return Number.parseFloat(suma(dataRow)).toFixed(3);
+                return Number.parseFloat(suma($(thas).DataTable().rows(row).data()[0])).toFixed(3);
             }else{
                 var arrSum = new Array;
                 for (var i = 0; i < lenRows; i++ ){
-                    var dataRow = $(thas).DataTable().rows(i).data()[0];
-                    arrSum.push(Number.parseFloat(suma(dataRow)).toFixed(3));
+                    arrSum.push(Number.parseFloat(suma($(thas).DataTable().rows(i).data()[0])).toFixed(3));
                 }
                 return arrSum;
             }
@@ -132,11 +128,13 @@
             selection: {
                 enabled: false,
                 type: 'click',
+                cursor: 'default',
                 callback: new Function
             }
         }, options.use ? options.use : {})
         if (useOptions.selection.enabled === true) {
             useOptions.selection.type = useOptions.selection.type || 'click';
+            useOptions.selection.cursor = useOptions.selection.cursor || 'default';
             $(thas).on(useOptions.selection.type, 'tr', function () {
                 var row = $(thas).DataTable().row(this);
                 var data = row.data();
@@ -145,11 +143,11 @@
             });
             $(thas).on('mouseenter', 'tr', function () {
                 this.style.backgroundColor = 'rgb(246, 246, 246)';
-                //this.style.cursor = 'pointer';
+                this.style.cursor = useOptions.selection.cursor;
             });
             $(thas).on('mouseleave', 'tr', function () {
                 this.style.backgroundColor = '#fff';
-                //this.style.cursor = 'default';
+                this.style.cursor = 'default';
             });
         }
 
@@ -174,6 +172,7 @@
             'selection: {\n'+
             '    enabled: true,                          // On/Off selection\n'+
             '    type: "click",                          // Evento? (default: "click")\n'+
+            '    cursor: "default",                      // Cursor? (default: "default")\n'+
             '    callback: function(row, data, index){   // Accion del evento\n'+
             '\n'+
             '    }\n'+
