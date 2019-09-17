@@ -80,8 +80,7 @@
                 useOptions.filter.targets.forEach(function(target){
                     if (target < lenCols){
                         validTargets.push(target);
-                        options.columns[target].title += '<button data-idcol="'+target+'" data-source="'+options.columns[target].title+'" style="float: right;" class="btn btn-default btn-usedatatable-filter"><i class="fa fa-filter"></i></button>';
-
+                        options.columns[target].title += '<i data-idcol="'+target+'" data-source="'+options.columns[target].title+'" style="float: right;cursor:pointer;" class="fa fa-filter btn-usedatatable-filter"></i>';
                     }
                 })
                 firstColumnDefs.push({"targets": validTargets, "orderable": false})
@@ -101,29 +100,28 @@
                         var lenCols = $(thas).DataTable().columns()[0].length;
                         useOptions.filter.targets.forEach(function(target){
                             if (target < lenCols){
-                                $w.useDT_sourceMapping[thas.id][source] = $w.useDT_sourceMapping[thas.id][options.columns[idCol].title] || new Object;
-                                $w.useDT_sourceMapping[thas.id][source].name = options.columns[idCol].title;
+                                var source = $(thas).DataTable().columns(target).header()[0].textContent;
+                                $w.useDT_sourceMapping[thas.id][source] = $w.useDT_sourceMapping[thas.id][source] || new Object;
+                                $w.useDT_sourceMapping[thas.id][source].name = source;
                                 $w.useDT_sourceMapping[thas.id][source].targetSelect = '';
-                                $w.useDT_sourceMapping[thas.id][source].values = $(thas).DataTable().columns(idCol).data()[0];
-                                $w.useDT_sourceMapping[thas.id][source].totalValues = $(thas).DataTable().columns(idCol).data()[0];
+                                $w.useDT_sourceMapping[thas.id][source].values = $(thas).DataTable().columns(target).data()[0];
+                                $w.useDT_sourceMapping[thas.id][source].totalValues = $(thas).DataTable().columns(target).data()[0];
                                 $w.useDT_sourceMapping[thas.id][source].selectedValues = [];
                             }
                         })
                     }
+                    $('.btn-usedatatable-filter').on('click', function(e){
+                        e.preventDefault();
+                        var title = $(this).data('source') || "";
+                        var source = $(this).data('source') || "";
+                        var idCol = $(this).data('idcol') || "";
+    
+                        
+                        
+                        if (source) showModal(title, source);
+                    })
                 }
 
-                $('.btn-usedatatable-filter').on('click', function(e){
-                    e.preventDefault();
-                    var title = $(this).data('source') || "";
-                    var source = $(this).data('source') || "";
-                    var idCol = $(this).data('idcol') || "";
-
-                    
-                    
-                    if (source) {
-                        showModal(title, source);
-                    }
-                })
                 
 
             options.initComplete = options.initComplete || new Function;
@@ -269,26 +267,39 @@
         
         
 
-        function showModal(title,origen) {
+        function showModal(title,source) {
             var modal = $(divModal);
             $(titleHeader).text(title);
-            modal.data('source', origen);
+            modal.data('source', source);
             modal.data('title', title);
-
-            // var data = [];
-            // data.push({
-            //     codigo: 'todos',
-            //     descripcion: 'TODOS',
-            //     children: $w.useDT_sourceMapping[thas.id][origen].values
-            // });
-            // var selecedCodes = $w.useDT_sourceMapping[thas.id][origen].selectedValues.map(function (v) { return v.codigo; });
-            // applyMenuFilter(modal.find('#modal-filter-container'), { data: data, isSearch: true }, selecedCodes);
+            applyMenuFilter(divModalFilterContainer, $w.useDT_sourceMapping[thas.id][source].values, $w.useDT_sourceMapping[thas.id][source].selectedValues);
             modal.modal('show');
             //AdministrarDefectos.botonAceptarListener();
         }
-        function applyMenuFilter(selector,model,selectedValues) {
-            $(selector).menuFilter(model);
-            $(selector).menuFilter("check", selectedValues || []);
+        function applyMenuFilter(selector,values,selectedValues) {
+            function siSelect(selected, current){
+                if (selected.some(function(e){
+                    return e === current;
+                })){
+                    return 'checked';
+                }
+                return '';
+            }
+            var inputSearch = $w.document.createElement('input');
+            inputSearch.type = 'text';
+            inputSearch.onkeyup = search.bind(this);
+            inputSearch.placeholder = 'BUSCAR';
+            var ulContainer = $w.document.createElement('ul');
+            values.forEach(function(e, i){
+                var li = $w.document.createElement('li');
+                li.style.listStyle = 'none';
+                li.innerHTML = '<div class="checkbox checkbox-primary"><input '+siSelect(selectedValues, e)+' id="useDTcheckbox'+i+'" class="styled" type="checkbox"><label for="useDTcheckbox'+i+'">'+e+'</label></div>';
+                ulContainer.appendChild(li);
+            })
+            selector.innerHTML = '';
+            selector.appendChild(inputSearch);
+            selector.appendChild(ulContainer);
+
         }
         function botonAceptarListener() {
             UtilJs.addCommonListener({
@@ -385,7 +396,7 @@
         // <li><a href="#">Christina</a></li>
         // <li><a href="#">Cindy</a></li>
         // </ul>
-        function search() {
+        function search(inputEle, ulEle) {
             var input, filter, ul, li, a, i, txtValue;
             input = document.getElementById("myInput");
             filter = input.value.toUpperCase();
