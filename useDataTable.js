@@ -75,10 +75,11 @@
                 $(thas).DataTable().row(row).remove().draw();
             }
         }
-        function addRow(arrRow) {
-            if (Array.isArray(arrRow)){
-                $(thas).DataTable().row.add(arrRow).draw();
-            }
+        function addRow(row) {
+            $(thas).DataTable().row.add(row).draw();
+        }
+        function addData(data) {
+            $(thas).DataTable().rows.add(data).draw();
         }
         function getData(idRow) {
             var row = Number.parseInt(idRow);
@@ -151,11 +152,12 @@
             'Acciones:\n\n'+
             'help     (): Muestra esta ayuda\n'+
             'draw     (settings?: object): Dibuja el DataTable (default)\n'+
-            'data     (idRow?: string || number): Retorna datos de la(s) fila(s)\n'+
-            'empty    (): Elimina todas las filas\n'+
             'redraw   (): Redibuja el DataTable\n'+
-            'addRow   (arrRow: array): Agrega un fila\n'+
+            'data     (idRow?: string || number): Retorna datos de la(s) fila(s)\n'+
+            'addRow   (row: array || object): Agrega un fila\n'+
+            'addData  (data: array): Agrega fila(s)\n'+
             'delRow   (idRow: string || number): Elimina la fila seleccionada\n'+
+            'empty    (): Elimina todas las filas\n'+
             'totalCol (idCol?: string || number): Retorna sumatoria de columna(s)\n'+
             'totalRow (idRow?: string || number): Retorna sumatoria de fila(s)\n\n'+
             'Configuraciones Extra:\n'+
@@ -171,7 +173,15 @@
             '    callback: function(row, data, index){   // Accion del evento\n'+
             '\n'+
             '    },\n'+
-            ' className: "table-responsive wrap etc"     // Clases? (default: "display")\n'
+            ' className: "table-responsive wrap etc"     // Clases? (default: "display")\n\n'+
+            ' Estructura de "<div>": \n\n'+
+            ' div.usedatatable-top\n'+
+            ' div.usedatatable-header\n'+
+            '  -------\n'+
+            ' \| TABLE \|\n'+
+            '  -------\n'+
+            ' div.usedatatable-footer\n'+
+            ' div.usedatatable-bottom\n'
         }
 
         switch (action) {
@@ -187,6 +197,8 @@
                 return delRow(param);
             case "addRow":
                 return addRow(param);
+            case "addData":
+                return addData(param);
             case "totalCol":
                 return columnTotal(param);
             case "totalRow":

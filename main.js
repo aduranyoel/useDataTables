@@ -4656,41 +4656,32 @@ var data = {
   ]
 }
 
-var row = [];
-data.Items.forEach(function(e){
-  row.push([
-    e.codigoFamilia,
-    e.codigoDefecto,
-    e.descFamilia,
-    e.fechaAlta
-  ])
-})
 
-        $('#tableContainer').useDataTable({
-          columns: [
-            {title: 'FAMILIA'},
-            {title: 'CODIGO DEFECTO'},
-            {title: 'DESCRIPCION'},
-            {title: 'FECHA ALTA'}
-        ],
-          data: row,
-          info: true,
-          scrollY: 500,
-          initComplete: function(settings, json){
-            $('.usedatatable-top').html('TOP')
-            $('.usedatatable-header').html('HEADER')
-            $('.usedatatable-footer').html('FOOTER')
-            $('.usedatatable-bottom').html('BOTTOM')
-          },
-          use: {
-            selection: {
-              enabled: true,
-              type: 'click',
-              cursor: 'default',
-              callback: function(row, data, index){
-                console.log(row)
-              }
-            },
-            className: 'display'
-          }
-        })
+$('#tableContainer').useDataTable({
+  columns: [
+    {title: 'FAMILIA', data: 'codigoFamilia'},
+    {title: 'CODIGO DEFECTO', data: 'codigoDefecto'},
+    {title: 'DESCRIPCION', data: 'descFamilia'},
+    {title: 'FECHA ALTA', data: 'fechaAlta'}
+],
+  data: data.Items,
+  info: true,
+  scrollY: 500,
+  initComplete: function(settings, json){
+    $('.usedatatable-top').html('TOP')
+    $('.usedatatable-header').html('HEADER')
+    $('.usedatatable-footer').html('FOOTER')
+    $('.usedatatable-bottom').html('BOTTOM')
+  },
+  use: {
+    selection: {
+      enabled: true,
+      type: 'click',
+      cursor: 'default',
+      callback: function(row, data, index){
+        console.log(row)
+      }
+    },
+    className: 'display'
+  }
+})
