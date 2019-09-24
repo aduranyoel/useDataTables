@@ -1,8 +1,8 @@
 (function ($) {
     'use strict';
-    if ($ === undefined) throw new Error('NO SE ENCUENTRA "window.jQuery" PUEDE DESCARGARLO EN "https://jquery.com/"')
+    if ($ === undefined) throw new Error('NO SE ENCUENTRA "window.jQuery" PUEDE DESCARGARLO EN "https://jquery.com/"');
     $.fn.useDataTable = function (action, param, options) {
-        if ($.fn.DataTable === undefined) throw new Error('NO SE ENCUENTRA "$.fn.DataTable". PUEDE DESCARGARLO EN "https://datatables.net/"')
+        if ($.fn.DataTable === undefined) throw new Error('NO SE ENCUENTRA "$.fn.DataTable". PUEDE DESCARGARLO EN "https://datatables.net/"');
         var thas = this[0];
         action = action || '';
         param = param || '';
@@ -53,14 +53,14 @@
                 callback: new Function
             },
             className: ' display'
-        }, options.use ? options.use : {})
-        var optionsResult = $.extend({}, options,{
-            "createdRow": function( row, data, dataIndex ) {
+        }, options.use ? options.use : {});
+        var optionsResult = $.extend({}, options, {
+            "createdRow": function (row, data, dataIndex) {
                 $(row).attr('data-idrow', dataIndex);
                 options.createdRow = options.createdRow || new Function;
                 if (typeof options.createdRow === "function") options.createdRow.call(this, row, data, dataIndex);
-              }
-        })
+            }
+        });
         var settings = $.extend({}, defaults, optionsResult);
         function draw(settings) {
             if (useOptions.className && typeof useOptions.className === "string") thas.className += useOptions.className;
@@ -71,7 +71,7 @@
         }
         function delRow(idRow) {
             var row = Number.parseInt(idRow);
-            if (!isNaN(row)){
+            if (!isNaN(row)) {
                 $(thas).DataTable().row(row).remove().draw();
             }
         }
@@ -83,51 +83,51 @@
         }
         function getData(idRow) {
             var row = Number.parseInt(idRow);
-            if (isNaN(row)){
+            if (isNaN(row)) {
                 var dataEleObj = $(thas).DataTable().rows().data();
                 var arrRes = [];
                 for (var i = 0, len = dataEleObj.length; i < len; i++) {
                     arrRes.push(dataEleObj[i]);
                 }
                 return arrRes;
-            }else{
+            } else {
                 return $(thas).DataTable().row(row).data();
             }
         }
-        function suma(data){
-            return data.reduce(function(a, b){
+        function suma(data) {
+            return data.reduce(function (a, b) {
                 a = Number.parseFloat(a) || 0;
                 b = Number.parseFloat(b) || 0;
                 return a + b;
-            })
+            });
         }
-        function columnTotal(idCol){
+        function columnTotal(idCol) {
             var col = Number.parseInt(idCol);
             var lenCols = $(thas).DataTable().columns()[0].length;
-            if (!Number.isNaN(col) && col < lenCols){
+            if (!Number.isNaN(col) && col < lenCols) {
                 return Number.parseFloat(suma($(thas).DataTable().columns(col).data()[0])).toFixed(3);
-            }else{
+            } else {
                 var arrSum = new Array;
-                for (var i = 0; i < lenCols; i++ ){
+                for (var i = 0; i < lenCols; i++) {
                     arrSum.push(Number.parseFloat(suma($(thas).DataTable().columns(i).data()[0])).toFixed(3));
                 }
                 return arrSum;
             }
         }
-        function rowTotal(idRow){
+        function rowTotal(idRow) {
             var row = Number.parseInt(idRow);
             var lenRows = $(thas).DataTable().rows()[0].length;
-            if (!Number.isNaN(row) && row < lenRows){
+            if (!Number.isNaN(row) && row < lenRows) {
                 return Number.parseFloat(suma($(thas).DataTable().rows(row).data()[0])).toFixed(3);
-            }else{
+            } else {
                 var arrSum = new Array;
-                for (var i = 0; i < lenRows; i++ ){
+                for (var i = 0; i < lenRows; i++) {
                     arrSum.push(Number.parseFloat(suma($(thas).DataTable().rows(i).data()[0])).toFixed(3));
                 }
                 return arrSum;
             }
         }
-        function clear(){
+        function clear() {
             $(thas).DataTable().clear().draw();
         }
         if (useOptions.selection.enabled === true) {
@@ -147,41 +147,41 @@
             });
         }
 
-        function help(){
-            return '\n'+
-            'Acciones:\n\n'+
-            'help     (): Muestra esta ayuda\n'+
-            'draw     (settings?: object): Dibuja el DataTable (default)\n'+
-            'redraw   (): Redibuja el DataTable\n'+
-            'data     (idRow?: string || number): Retorna datos de la(s) fila(s)\n'+
-            'addRow   (row: array || object): Agrega un fila\n'+
-            'addData  (data: array): Agrega fila(s)\n'+
-            'delRow   (idRow: string || number): Elimina la fila seleccionada\n'+
-            'empty    (): Elimina todas las filas\n'+
-            'totalCol (idCol?: string || number): Retorna sumatoria de columna(s)\n'+
-            'totalRow (idRow?: string || number): Retorna sumatoria de fila(s)\n\n'+
-            'Configuraciones Extra:\n'+
-            '...\n'+
-            'use: {\n'+
-            '    ...                                     // Oppciones de useDataTable\n'+
-            '}\n'+
-            '...\n\n'+
-            'selection: {\n'+
-            '    enabled: true,                          // On/Off selection\n'+
-            '    type: "click",                          // Evento? (default: "click")\n'+
-            '    cursor: "default",                      // Cursor? (default: "default")\n'+
-            '    callback: function(row, data, index){   // Accion del evento\n'+
-            '\n'+
-            '    },\n'+
-            ' className: "table-responsive wrap etc"     // Clases? (default: "display")\n\n'+
-            ' Estructura de "<div>": \n\n'+
-            ' div.usedatatable-top\n'+
-            ' div.usedatatable-header\n'+
-            '  -------\n'+
-            ' \| TABLE \|\n'+
-            '  -------\n'+
-            ' div.usedatatable-footer\n'+
-            ' div.usedatatable-bottom\n'
+        function help() {
+            return '\n' +
+                'Acciones:\n\n' +
+                'help     (): Muestra esta ayuda\n' +
+                'draw     (settings?: object): Dibuja el DataTable (default)\n' +
+                'redraw   (): Redibuja el DataTable\n' +
+                'data     (idRow?: string || number): Retorna datos de la(s) fila(s)\n' +
+                'addRow   (row: array || object): Agrega un fila\n' +
+                'addData  (data: array): Agrega fila(s)\n' +
+                'delRow   (idRow: string || number): Elimina la fila seleccionada\n' +
+                'empty    (): Elimina todas las filas\n' +
+                'totalCol (idCol?: string || number): Retorna sumatoria de columna(s)\n' +
+                'totalRow (idRow?: string || number): Retorna sumatoria de fila(s)\n\n' +
+                'Configuraciones Extra:\n' +
+                '...\n' +
+                'use: {\n' +
+                '    ...                                     // Oppciones de useDataTable\n' +
+                '}\n' +
+                '...\n\n' +
+                'selection: {\n' +
+                '    enabled: true,                          // On/Off selection\n' +
+                '    type: "click",                          // Evento? (default: "click")\n' +
+                '    cursor: "default",                      // Cursor? (default: "default")\n' +
+                '    callback: function(row, data, index){   // Accion del evento\n' +
+                '\n' +
+                '    },\n' +
+                ' className: "table-responsive wrap etc"     // Clases? (default: "display")\n\n' +
+                ' Estructura de "<div>": \n\n' +
+                ' div.usedatatable-top\n' +
+                ' div.usedatatable-header\n' +
+                '  -------\n' +
+                ' \| TABLE \|\n' +
+                '  -------\n' +
+                ' div.usedatatable-footer\n' +
+                ' div.usedatatable-bottom\n';
         }
 
         switch (action) {
@@ -204,7 +204,7 @@
             case "totalRow":
                 return rowTotal(param);
             case "empty":
-                return clear();    
+                return clear();
             default:
                 return draw(settings);
         }
