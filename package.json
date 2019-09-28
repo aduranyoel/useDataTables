@@ -1,0 +1,26 @@
+{
+  "name": "usedatatable",
+  "version": "1.0.2",
+  "description": "Usar DataTable(https://datatables.net/) nunca fue tan facil",
+  "main": "useDataTable.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yoet92/useDataTable.git"
+  },
+  "keywords": [
+    "DataTable",
+    "useDataTable"
+  ],
+  "author": "Tony Duran",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yoet92/useDataTable/issues"
+  },
+  "homepage": "https://github.com/yoet92/useDataTable#readme"
+}
