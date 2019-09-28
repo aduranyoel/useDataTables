@@ -4678,6 +4678,8 @@ $('#tableContainer').useDataTable({
       enabled: true,
       type: 'click',
       cursor: 'default',
+      background: 'black',
+      color: 'yellow',
       callback: function(row, data, index){
         console.log(row)
       }

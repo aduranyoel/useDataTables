@@ -2,7 +2,7 @@
     'use strict';
     if ($ === undefined) throw new Error('NO SE ENCUENTRA "window.jQuery" PUEDE DESCARGARLO EN "https://jquery.com/"');
     $.fn.useDataTable = function (action, param, options) {
-        if ($.fn.DataTable === undefined) throw new Error('NO SE ENCUENTRA "$.fn.DataTable". PUEDE DESCARGARLO EN "https://datatables.net/"');
+        if ($.fn.DataTable === undefined) throw new Error('NO SE ENCUENTRA "jQuery.fn.DataTable". PUEDE DESCARGARLO EN "https://datatables.net/"');
         var thas = this[0];
         action = action || '';
         param = param || '';
@@ -50,6 +50,8 @@
                 enabled: false,
                 type: 'click',
                 cursor: 'default',
+                color: 'none',
+                background: 'none',
                 callback: new Function
             },
             className: ' display'
@@ -71,15 +73,13 @@
         }
         function delRow(idRow) {
             var row = Number.parseInt(idRow);
-            if (!isNaN(row)) {
-                $(thas).DataTable().row(row).remove().draw();
-            }
+            if (!isNaN(row)) $(thas).DataTable().row(row).remove().draw();
         }
         function addRow(row) {
-            $(thas).DataTable().row.add(row).draw();
+            if (Array.isArray(row) || typeof row === "object") $(thas).DataTable().row.add(row).draw();
         }
         function addData(data) {
-            $(thas).DataTable().rows.add(data).draw();
+            if (Array.isArray(data)) $(thas).DataTable().rows.add(data).draw();
         }
         function getData(idRow) {
             var row = Number.parseInt(idRow);
@@ -133,6 +133,8 @@
         if (useOptions.selection.enabled === true) {
             useOptions.selection.type = useOptions.selection.type || 'click';
             useOptions.selection.cursor = useOptions.selection.cursor || 'default';
+            useOptions.selection.background = useOptions.selection.background || 'none';
+            useOptions.selection.color = useOptions.selection.color || 'none';
             $(thas).on(useOptions.selection.type, 'tr', function () {
                 var row = $(thas).DataTable().row(this);
                 var data = row.data();
@@ -141,9 +143,13 @@
             });
             $(thas).on('mouseenter', 'tr', function () {
                 this.style.cursor = useOptions.selection.cursor;
+                this.style.backgroundColor = useOptions.selection.background;
+                this.style.color = useOptions.selection.color;
             });
             $(thas).on('mouseleave', 'tr', function () {
                 this.style.cursor = 'default';
+                this.style.backgroundColor = '';
+                this.style.color = '';
             });
         }
 
@@ -167,9 +173,11 @@
                 '}\n' +
                 '...\n\n' +
                 'selection: {\n' +
-                '    enabled: true,                          // On/Off selection\n' +
+                '    enabled: true,                          // On/Off (default: "false")\n' +
                 '    type: "click",                          // Evento? (default: "click")\n' +
                 '    cursor: "default",                      // Cursor? (default: "default")\n' +
+                '    color: "white",                         // Color? (default: "none")\n' +
+                '    background: "black",                    // Background? (default: "none")\n' +
                 '    callback: function(row, data, index){   // Accion del evento\n' +
                 '\n' +
                 '    },\n' +
