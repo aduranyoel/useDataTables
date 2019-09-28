@@ -7,9 +7,8 @@ help     (): Muestra esta ayuda
 draw     (settings?: object): Dibuja el DataTable (default)
 redraw   (): Redibuja el DataTable
 data     (idRow?: string || number): Retorna datos de la(s) fila(s)
-addRow   (row: array || object): Agrega un fila
-addData  (data: array): Agrega fila(s)
-delRow   (idRow: string || number): Elimina la fila seleccionada
+add      (row(s): array || object): Agrega fila(s)
+del      (idRow: string || number): Elimina la fila seleccionada
 empty    (): Elimina todas las filas
 totalCol (idCol?: string || number): Retorna sumatoria de columna(s)
 totalRow (idRow?: string || number): Retorna sumatoria de fila(s)
