@@ -1,7 +1,7 @@
 {
   "name": "usedatatable",
-  "version": "1.0.2",
-  "description": "Usar DataTable(https://datatables.net/) nunca fue tan facil",
+  "version": "1.0.3",
+  "description": "Usar DataTables(https://datatables.net/) nunca fue tan facil",
   "main": "useDataTable.js",
   "directories": {
     "example": "example"
@@ -19,6 +19,10 @@
   ],
   "author": "Tony Duran",
   "license": "MIT",
+  "dependencies": {
+    "jquery": ">=1.7",
+    "datatables": "^1.10.18"
+  },
   "bugs": {
     "url": "https://github.com/yoet92/useDataTable/issues"
   },
