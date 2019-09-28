@@ -72,14 +72,15 @@
             $(thas).DataTable().draw();
         }
         function delRow(idRow) {
-            var row = Number.parseInt(idRow);
+            var row = Number.parseInt(idRow) || 0;
             if (!isNaN(row)) $(thas).DataTable().row(row).remove().draw();
         }
         function addRow(row) {
-            if (Array.isArray(row) || typeof row === "object") $(thas).DataTable().row.add(row).draw();
-        }
-        function addData(data) {
-            if (Array.isArray(data)) $(thas).DataTable().rows.add(data).draw();
+            if (Array.isArray(row) || $.isPlainObject(row)){
+                Array.isArray(row) && ( Array.isArray(row[0]) || $.isPlainObject(row[0]) ) ?
+                $(thas).DataTable().rows.add(row).draw() :
+                $(thas).DataTable().row.add(row).draw();
+            }
         }
         function getData(idRow) {
             var row = Number.parseInt(idRow);
@@ -160,9 +161,8 @@
                 'draw     (settings?: object): Dibuja el DataTable (default)\n' +
                 'redraw   (): Redibuja el DataTable\n' +
                 'data     (idRow?: string || number): Retorna datos de la(s) fila(s)\n' +
-                'addRow   (row: array || object): Agrega un fila\n' +
-                'addData  (data: array): Agrega fila(s)\n' +
-                'delRow   (idRow: string || number): Elimina la fila seleccionada\n' +
+                'add      (row(s): array || object): Agrega fila(s)\n' +
+                'del      (idRow: string || number): Elimina la fila seleccionada\n' +
                 'empty    (): Elimina todas las filas\n' +
                 'totalCol (idCol?: string || number): Retorna sumatoria de columna(s)\n' +
                 'totalRow (idRow?: string || number): Retorna sumatoria de fila(s)\n\n' +
@@ -201,12 +201,10 @@
                 return redraw();
             case "data":
                 return getData(param);
-            case "delRow":
+            case "del":
                 return delRow(param);
-            case "addRow":
+            case "add":
                 return addRow(param);
-            case "addData":
-                return addData(param);
             case "totalCol":
                 return columnTotal(param);
             case "totalRow":
