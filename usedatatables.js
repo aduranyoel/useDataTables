@@ -1,14 +1,48 @@
-(function ($) {
-    'use strict';
-    if ($ === undefined) throw new Error('NO SE ENCUENTRA "window.jQuery" PUEDE DESCARGARLO EN "https://jquery.com/"');
-    $.fn.useDataTable = function (action, param, options) {
+(function( factory ) {
+    "use strict";
+    
+	if ( typeof define === 'function' && define.amd ) {
+
+		define( ['jquery'], function ( $ ) {
+			return factory( $, window, document );
+		} );
+	}
+	else if ( typeof exports === 'object' ) {
+
+		module.exports = function (root, $) {
+
+			if ( ! root ) {
+				root = window;
+			}
+
+			if ( ! $ ) {
+				$ = typeof window !== 'undefined' ?
+					require('jquery') :
+					require('jquery')( root );
+			}
+
+			return factory( $, root, root.document );
+		};
+	}
+	else {
+
+		factory( jQuery, window, document );
+	}
+}
+(function( $, window, document, undefined ) {
+    "use strict";
+
+    var useDataTable = function(action, param, options){
+
         if ($.fn.DataTable === undefined) throw new Error('NO SE ENCUENTRA "jQuery.fn.DataTable". PUEDE DESCARGARLO EN "https://datatables.net/"');
         var thas = this[0];
+        var $this = $(this);
         action = action || '';
         param = param || '';
         options = options || {};
         if (typeof action === "object") options = action;
         if (typeof param === "object") options = param;
+        var currentSettings = $this.dataTableSettings.length;
         var defaults = {
             "autoWidth": true,
             "info": false,
@@ -45,6 +79,7 @@
                 }
             }
         };
+
         var useOptions = $.extend({}, {
             selection: {
                 enabled: false,
@@ -56,43 +91,65 @@
             },
             className: ' display'
         }, options.use ? options.use : {});
+
         var optionsResult = $.extend({}, options, {
             "createdRow": function (row, data, dataIndex) {
+
                 $(row).attr('data-idrow', dataIndex);
                 options.createdRow = options.createdRow || new Function;
                 if (typeof options.createdRow === "function") options.createdRow.call(this, row, data, dataIndex);
             }
         });
+
         var settings = $.extend({}, defaults, optionsResult);
+
+        function fnAdjustColumnSizing( bRedraw ){
+
+			var api = $this.dataTable().api( true ).columns.adjust();
+			var settings = api.settings()[0];
+			var scroll = settings.oScroll;
+		
+			if ( bRedraw === undefined || bRedraw ) {
+				api.draw( false );
+			}
+			else if ( scroll.sX !== "" || scroll.sY !== "" ) {
+				_fnScrollDraw( settings );
+			}
+        };
+        function ajustEvent(){
+            $(window).on('resize', fnAdjustColumnSizing );
+        }
         function draw(settings) {
+
             if (useOptions.className && typeof useOptions.className === "string") thas.className += useOptions.className;
-            $(thas).DataTable(settings);
+            $this.DataTable(settings);
+            ajustEvent()
         }
         function redraw() {
-            $(thas).DataTable().draw();
+            $this.DataTable().draw();
         }
         function delRow(idRow) {
             var row = Number.parseInt(idRow) || 0;
-            if (!isNaN(row)) $(thas).DataTable().row(row).remove().draw();
+            if (!isNaN(row)) $this.DataTable().row(row).remove().draw();
         }
         function addRow(row) {
             if (Array.isArray(row) || $.isPlainObject(row)){
                 Array.isArray(row) && ( Array.isArray(row[0]) || $.isPlainObject(row[0]) ) ?
-                $(thas).DataTable().rows.add(row).draw() :
-                $(thas).DataTable().row.add(row).draw();
+                $this.DataTable().rows.add(row).draw() :
+                $this.DataTable().row.add(row).draw();
             }
         }
         function getData(idRow) {
             var row = Number.parseInt(idRow);
             if (isNaN(row)) {
-                var dataEleObj = $(thas).DataTable().rows().data();
+                var dataEleObj = $this.DataTable().rows().data();
                 var arrRes = [];
                 for (var i = 0, len = dataEleObj.length; i < len; i++) {
                     arrRes.push(dataEleObj[i]);
                 }
                 return arrRes;
             } else {
-                return $(thas).DataTable().row(row).data();
+                return $this.DataTable().row(row).data();
             }
         }
         function suma(data) {
@@ -104,50 +161,50 @@
         }
         function columnTotal(idCol) {
             var col = Number.parseInt(idCol);
-            var lenCols = $(thas).DataTable().columns()[0].length;
+            var lenCols = $this.DataTable().columns()[0].length;
             if (!Number.isNaN(col) && col < lenCols) {
-                return Number.parseFloat(suma($(thas).DataTable().columns(col).data()[0])).toFixed(3);
+                return Number.parseFloat(suma($this.DataTable().columns(col).data()[0])).toFixed(3);
             } else {
                 var arrSum = new Array;
                 for (var i = 0; i < lenCols; i++) {
-                    arrSum.push(Number.parseFloat(suma($(thas).DataTable().columns(i).data()[0])).toFixed(3));
+                    arrSum.push(Number.parseFloat(suma($this.DataTable().columns(i).data()[0])).toFixed(3));
                 }
                 return arrSum;
             }
         }
         function rowTotal(idRow) {
             var row = Number.parseInt(idRow);
-            var lenRows = $(thas).DataTable().rows()[0].length;
+            var lenRows = $this.DataTable().rows()[0].length;
             if (!Number.isNaN(row) && row < lenRows) {
-                return Number.parseFloat(suma($(thas).DataTable().rows(row).data()[0])).toFixed(3);
+                return Number.parseFloat(suma($this.DataTable().rows(row).data()[0])).toFixed(3);
             } else {
                 var arrSum = new Array;
                 for (var i = 0; i < lenRows; i++) {
-                    arrSum.push(Number.parseFloat(suma($(thas).DataTable().rows(i).data()[0])).toFixed(3));
+                    arrSum.push(Number.parseFloat(suma($this.DataTable().rows(i).data()[0])).toFixed(3));
                 }
                 return arrSum;
             }
         }
         function clear() {
-            $(thas).DataTable().clear().draw();
+            $this.DataTable().clear().draw();
         }
         if (useOptions.selection.enabled === true) {
             useOptions.selection.type = useOptions.selection.type || 'click';
             useOptions.selection.cursor = useOptions.selection.cursor || 'default';
             useOptions.selection.background = useOptions.selection.background || 'none';
             useOptions.selection.color = useOptions.selection.color || 'none';
-            $(thas).on(useOptions.selection.type, 'tr', function () {
-                var row = $(thas).DataTable().row(this);
+            $this.on(useOptions.selection.type, 'tr', function () {
+                var row = $this.DataTable().row(this);
                 var data = row.data();
                 var index = row.index();
                 if (typeof useOptions.selection.callback === "function") useOptions.selection.callback.call(this, row, data, index);
             });
-            $(thas).on('mouseenter', 'tr', function () {
+            $this.on('mouseenter', 'tr', function () {
                 this.style.cursor = useOptions.selection.cursor;
                 this.style.backgroundColor = useOptions.selection.background;
                 this.style.color = useOptions.selection.color;
             });
-            $(thas).on('mouseleave', 'tr', function () {
+            $this.on('mouseleave', 'tr', function () {
                 this.style.cursor = 'default';
                 this.style.backgroundColor = '';
                 this.style.color = '';
@@ -157,15 +214,16 @@
         function help() {
             return '\n' +
                 'Acciones:\n\n' +
-                'help     (): Muestra esta ayuda\n' +
-                'draw     (settings?: object): Dibuja el DataTable (default)\n' +
-                'redraw   (): Redibuja el DataTable\n' +
-                'data     (idRow?: string || number): Retorna datos de la(s) fila(s)\n' +
-                'add      (row(s): array || object): Agrega fila(s)\n' +
-                'del      (idRow: string || number): Elimina la fila seleccionada\n' +
-                'empty    (): Elimina todas las filas\n' +
-                'totalCol (idCol?: string || number): Retorna sumatoria de columna(s)\n' +
-                'totalRow (idRow?: string || number): Retorna sumatoria de fila(s)\n\n' +
+                'help       (): Muestra esta ayuda\n' +
+                'draw       (settings?: object): Dibuja el DataTable (default)\n' +
+                'redraw     (): Redibuja el DataTable\n' +
+                'data       (idRow?: string || number): Retorna datos de la(s) fila(s)\n' +
+                'add        (row(s): array || object): Agrega fila(s)\n' +
+                'del        (idRow: string || number): Elimina la fila seleccionada\n' +
+                'clear      (): Elimina todas las filas\n' +
+                'totalCol   (idCol?: string || number): Retorna sumatoria de columna(s)\n' +
+                'totalRow   (idRow?: string || number): Retorna sumatoria de fila(s)\n' +
+                'ajustEvent (idRow?: string || number): Retorna sumatoria de fila(s)\n\n' +
                 'Configuraciones Extra:\n' +
                 '...\n' +
                 'use: {\n' +
@@ -195,8 +253,13 @@
         switch (action) {
             case "help":
                 return help();
+            default:
             case "draw":
-                return draw(settings);
+                    if (currentSettings > 0 && Object.keys(options).length === 0){
+                        return redraw()
+                    }else{
+                        return draw(settings);
+                    }
             case "redraw":
                 return redraw();
             case "data":
@@ -209,10 +272,13 @@
                 return columnTotal(param);
             case "totalRow":
                 return rowTotal(param);
-            case "empty":
+            case "clear":
                 return clear();
-            default:
-                return draw(settings);
+            case "ajustEvent":
+                return ajustEvent();
         }
-    };
-})(window.jQuery);
+    }
+    $.fn.useDataTable = useDataTable;
+    $.fn.useDataTable.version = "1.0.6";
+	return $.fn.useDataTable;
+}));
