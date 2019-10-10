@@ -3,15 +3,18 @@ $.fn.useDataTable('help');
 
 Acciones:
 
-help     (): Muestra esta ayuda
-draw     (settings?: object): Dibuja el DataTable (default)
-redraw   (): Redibuja el DataTable
-data     (idRow?: string || number): Retorna datos de la(s) fila(s)
-add      (row(s): array || object): Agrega fila(s)
-del      (idRow: string || number): Elimina la fila seleccionada
-empty    (): Elimina todas las filas
-totalCol (idCol?: string || number): Retorna sumatoria de columna(s)
-totalRow (idRow?: string || number): Retorna sumatoria de fila(s)
+help        (): Muestra esta ayuda
+draw        (settings?: object): Dibuja el DataTable (default)
+redraw      (): Redibuja el DataTable
+data        (idRow?: string || number): Retorna datos de la(s) fila(s)
+add         (row(s): array || object): Agrega fila(s)
+del         (idRow(s): array || string || number): Elimina la(s) fila(s)
+clear       (): Elimina todas las filas
+destroy     (): Destruye el DataTable
+adjust      (): Ajusta la(s) columna(s)
+adjustEvent (): Agrega al (window.onresize) el ajuste de columnas
+totalCol    (idCol?: string || number): Retorna sumatoria de columna(s)
+totalRow    (idRow?: string || number): Retorna sumatoria de fila(s)
 
 Configuraciones Extra:
 ...
@@ -40,4 +43,4 @@ selection: {
   -------
  div.usedatatable-footer
  div.usedatatable-bottom
-```
+ ```

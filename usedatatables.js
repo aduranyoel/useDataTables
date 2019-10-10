@@ -309,6 +309,6 @@
             }
         };
         $.fn.useDataTable = useDataTable;
-        $.fn.useDataTable.version = "1.0.8";
+        $.fn.useDataTable.version = "1.0.9";
         return $.fn.useDataTable;
     }));
