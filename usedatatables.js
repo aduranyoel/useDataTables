@@ -123,7 +123,7 @@
 
                 if (useOptions.className && typeof useOptions.className === "string") $this[0].className += useOptions.className;
                 $this.DataTable(settings);
-                fnAdjustColumnSizing();
+                setTimeout(function(){fnAdjustColumnSizing()}, 250);
                 adjustEvent();
             }
             function redraw(complete) {
@@ -330,6 +330,6 @@
             }
         };
         $.fn.useDataTable = useDataTable;
-        $.fn.useDataTable.version = "1.0.10";
+        $.fn.useDataTable.version = "1.0.11";
         return $.fn.useDataTable;
     }));
