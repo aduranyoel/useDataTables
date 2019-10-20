@@ -36,8 +36,8 @@
 
             if ($.fn.DataTable === undefined) throw new Error('NO SE ENCUENTRA "jQuery.fn.DataTable". PUEDE DESCARGARLO EN "https://datatables.net/"');
             var $this = $(this);
-            action = action || undefined;
-            param = param || undefined;
+            action = action !== undefined ? action : undefined;
+            param = param !== undefined ? param : undefined;
             options = options || {};
             if (typeof action === "object") options = action;
             if (typeof param === "object") options = param;
@@ -47,7 +47,7 @@
                 "info": false,
                 "lengthChange": false,
                 "lengthMenu": [10, 25, 50, 75, 100],
-                "pageLength": 5,
+                "pageLength": 50,
                 "pagingType": "numbers",
                 "ordering": true,
                 "searching": true,
@@ -88,19 +88,10 @@
                     background: 'none',
                     callback: new Function
                 },
-                className: ' display'
+                className: ' table nowrap'
             }, options.use ? options.use : {});
 
-            var optionsResult = $.extend({}, options, {
-                "createdRow": function (row, data, dataIndex) {
-
-                    $(row).attr('data-idrow', dataIndex);
-                    options.createdRow = options.createdRow || new Function;
-                    if (typeof options.createdRow === "function") options.createdRow.call(this, row, data, dataIndex);
-                }
-            });
-
-            var settings = $.extend({}, defaults, optionsResult);
+            var settings = $.extend({}, defaults, options);
 
             function fnAdjustColumnSizing(bRedraw) {
 
@@ -123,7 +114,7 @@
 
                 if (useOptions.className && typeof useOptions.className === "string") $this[0].className += useOptions.className;
                 $this.DataTable(settings);
-                setTimeout(function(){fnAdjustColumnSizing()}, 250);
+                setTimeout(function(){ fnAdjustColumnSizing() }, 250);
                 adjustEvent();
             }
             function redraw(complete) {
@@ -137,18 +128,19 @@
                 obj.x = obj.x || 0;
                 obj.y = obj.y || 0;
                 obj.data = obj.data || undefined;
+                obj.draw = obj.draw === true ? true : false;
                 var cell = $this.dataTable().api(true).cell(obj.x, obj.y);
 
                 if ( obj.data !== undefined ){
                     
-                    cell.data(obj.data).draw();
+                    cell.data(obj.data).draw(obj.draw);
                 }else{
                     return cell.data();
                 }
             }
             function fnDeleteRow(target) {
 
-                var rowtarget = Array.isArray(target) ? target : parseInt(target) ? parseInt(target) : 0;
+                var rowtarget = Array.isArray(target) ? target : parseInt(target);
                 var api = $this.dataTable().api(true);
                 var rows = api.rows(rowtarget);
                 rows.remove();
@@ -166,54 +158,50 @@
                         $this.DataTable().row.add(row).draw();
                 }
             }
-            function getData(idRow) {
+            function getData(id, target) {
 
-                var row = Number.parseInt(idRow);
-                if (isNaN(row)) {
-                    var dataEleObj = $this.DataTable().rows().data();
+                var val = Number.parseInt(id);
+                if (isNaN(val)) {
+
+                    var dataEleObj = target === 'row' ? $this.DataTable().rows().data()
+                    : target === 'col' ? $this.DataTable().columns().data() : [];
                     var arrRes = [];
                     for (var i = 0, len = dataEleObj.length; i < len; i++) {
                         arrRes.push(dataEleObj[i]);
                     }
                     return arrRes;
                 } else {
-                    return $this.DataTable().row(row).data();
+                    return target === 'row' ? $this.DataTable().row(val).data()
+                    : target === 'col' ? $this.DataTable().column(val).data() : [];
                 }
             }
             function suma(data) {
 
-                return data.reduce(function (a, b) {
-                    a = Number.parseFloat(a) || 0;
-                    b = Number.parseFloat(b) || 0;
-                    return a + b;
-                });
-            }
-            function columnTotal(idCol) {
+                var acumulador = 0;
+                var target = $.isPlainObject(data) ? 'obj' : Array.isArray(data) ? 'arr' : null;
+                var len = target === 'obj' ? Object.keys(data).length : target === 'arr' ? data.length : 0;
 
-                var col = Number.parseInt(idCol);
-                var lenCols = $this.DataTable().columns()[0].length;
-
-                if (!Number.isNaN(col) && col < lenCols) {
-                    return Number.parseFloat(suma($this.DataTable().columns(col).data()[0])).toFixed(3);
-                } else {
-                    var arrSum = new Array;
-                    for (var i = 0; i < lenCols; i++) {
-                        arrSum.push(Number.parseFloat(suma($this.DataTable().columns(i).data()[0])).toFixed(3));
-                    }
-                    return arrSum;
+                for ( var i = 0; i < len; i++ ){
+                    acumulador += parseFloat(data[target === 'obj' ? Object.keys(data)[i] : target === 'arr' ? i : i ]) || 0;
                 }
+                return acumulador;
             }
-            function rowTotal(idRow) {
+            function total(id, target) {
 
-                var row = Number.parseInt(idRow);
-                var lenRows = $this.DataTable().rows()[0].length;
+                var val = Number.parseInt(id);
+                var len = target === 'row' ? $this.DataTable().rows()[0].length
+                : target === 'col' ? $this.DataTable().columns()[0].length : 0;
 
-                if (!Number.isNaN(row) && row < lenRows) {
-                    return Number.parseFloat(suma($this.DataTable().rows(row).data()[0])).toFixed(3);
+                if (!Number.isNaN(val) && val < len) {
+
+                    return Number.parseFloat(suma(target === 'row' ? $this.DataTable().rows(val).data()[0]
+                    : target === 'col' ? $this.DataTable().columns(val).data()[0] : [])).toFixed(3);
                 } else {
+
                     var arrSum = new Array;
-                    for (var i = 0; i < lenRows; i++) {
-                        arrSum.push(Number.parseFloat(suma($this.DataTable().rows(i).data()[0])).toFixed(3));
+                    for (var i = 0; i < len; i++) {
+                        arrSum.push(Number.parseFloat(suma(target === 'row' ? $this.DataTable().rows(i).data()[0]
+                        : target === 'col' ? $this.DataTable().columns(i).data()[0] : [])).toFixed(3));
                     }
                     return arrSum;
                 }
@@ -259,6 +247,7 @@
                     'draw        (settings?: object): Dibuja el DataTable (default)\n' +
                     'redraw      (): Redibuja el DataTable\n' +
                     'data        (idRow?: string || number): Retorna datos de la(s) fila(s)\n' +
+                    'dataCol     (idCol?: string || number): Retorna datos de la(s) columna(s)\n' +
                     'cell        (obj?: object): Retorna o Asigna el data de la celda\n' +
                     'add         (row(s): array || object): Agrega fila(s)\n' +
                     'del         (idRow(s): array || string || number): Elimina la(s) fila(s)\n' +
@@ -283,7 +272,7 @@
                     '    callback: function(row, data, index){   // Accion del evento\n' +
                     '\n' +
                     '    },\n' +
-                    ' className: "table-responsive wrap etc"     // Clases? (default: "display")\n\n' +
+                    ' className: "table-responsive wrap etc"     // Clases? (default: "table nowrap")\n\n' +
                     ' Estructura de "<div>": \n\n' +
                     ' div.usedatatable-top\n' +
                     ' div.usedatatable-header\n' +
@@ -307,15 +296,17 @@
                 case "redraw":
                     return redraw();
                 case "data":
-                    return getData(param);
+                    return getData(param, 'row');
+                case "dataCol":
+                    return getData(param, 'col');
                 case "del":
                     return fnDeleteRow(param);
                 case "add":
                     return addRow(param);
                 case "totalCol":
-                    return columnTotal(param);
+                    return total(param, 'col');
                 case "totalRow":
-                    return rowTotal(param);
+                    return total(param, 'row');
                 case "clear":
                     return clear();
                 case "adjustEvent":
@@ -330,6 +321,6 @@
             }
         };
         $.fn.useDataTable = useDataTable;
-        $.fn.useDataTable.version = "1.0.11";
+        $.fn.useDataTable.version = "1.0.12";
         return $.fn.useDataTable;
     }));

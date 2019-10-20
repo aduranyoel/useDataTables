@@ -7,6 +7,7 @@ help        (): Muestra esta ayuda
 draw        (settings?: object): Dibuja el DataTable (default)
 redraw      (): Redibuja el DataTable
 data        (idRow?: string || number): Retorna datos de la(s) fila(s)
+dataCol     (idCol?: string || number): Retorna datos de la(s) columna(s)
 cell        (obj?: object): Retorna o Asigna el data de la celda
 add         (row(s): array || object): Agrega fila(s)
 del         (idRow(s): array || string || number): Elimina la(s) fila(s)
@@ -33,7 +34,7 @@ selection: {
     callback: function(row, data, index){   // Accion del evento
 
     },
- className: "table-responsive wrap etc"     // Clases? (default: "display")
+ className: "table-responsive wrap etc"     // Clases? (default: "table nowrap")
 
  Estructura de "<div>": 
 
