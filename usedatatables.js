@@ -114,14 +114,13 @@
 
                 if (useOptions.className && typeof useOptions.className === "string") $this[0].className += useOptions.className;
                 $this.DataTable(settings);
-                setTimeout(function(){ fnAdjustColumnSizing() }, 250);
+                setTimeout(function(){ fnAdjustColumnSizing(); }, 250);
                 adjustEvent();
             }
             function redraw(complete) {
 
                 $this.dataTable().api(true).draw(complete);
             }
-            
             function cell(obj) {
 
                 obj = $.isPlainObject(obj) ? obj : {};
@@ -210,6 +209,11 @@
 
                 $this.DataTable().clear().draw();
             }
+            function config() {
+                var api = $this.dataTable().api(true);
+                var settings = api.settings()[0];
+                return settings;
+            }
 
             if (useOptions.selection.enabled === true) {
 
@@ -253,6 +257,7 @@
                     'del         (idRow(s): array || string || number): Elimina la(s) fila(s)\n' +
                     'clear       (): Elimina todas las filas\n' +
                     'destroy     (): Destruye el DataTable\n' +
+                    'settings    (): Retorna la configuracion del DataTable\n' +
                     'adjust      (): Ajusta la(s) columna(s)\n' +
                     'adjustEvent (): Agrega al (window.onresize) el ajuste de columnas\n' +
                     'totalCol    (idCol?: string || number): Retorna sumatoria de columna(s)\n' +
@@ -317,10 +322,12 @@
                     return fnDestroy();
                 case "cell":
                     return cell(param);
+                case "settings":
+                    return config();
 
             }
         };
         $.fn.useDataTable = useDataTable;
-        $.fn.useDataTable.version = "1.0.12";
+        $.fn.useDataTable.version = "1.0.13";
         return $.fn.useDataTable;
     }));

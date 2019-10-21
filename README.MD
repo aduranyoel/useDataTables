@@ -13,6 +13,7 @@ add         (row(s): array || object): Agrega fila(s)
 del         (idRow(s): array || string || number): Elimina la(s) fila(s)
 clear       (): Elimina todas las filas
 destroy     (): Destruye el DataTable
+settings    (): Retorna la configuracion del DataTable
 adjust      (): Ajusta la(s) columna(s)
 adjustEvent (): Agrega al (window.onresize) el ajuste de columnas
 totalCol    (idCol?: string || number): Retorna sumatoria de columna(s)
