@@ -41,7 +41,7 @@
             options = options || {};
             if (typeof action === "object") options = action;
             if (typeof param === "object") options = param;
-            var currentSettings = $this.dataTableSettings.length;
+            var isInit = $.fn.DataTable.isDataTable($this[0]);
             var defaults = {
                 "autoWidth": true,
                 "info": false,
@@ -88,7 +88,8 @@
                     background: 'none',
                     callback: new Function
                 },
-                className: ' table nowrap'
+                className: 'table',
+                footer: false
             }, options.use ? options.use : {});
 
             var settings = $.extend({}, defaults, options);
@@ -112,9 +113,21 @@
             }
             function draw(settings) {
 
-                if (useOptions.className && typeof useOptions.className === "string") $this[0].className += useOptions.className;
+                if (useOptions.className && typeof useOptions.className === "string" && !$this.hasClass(useOptions.className)) $this.addClass(useOptions.className);
+                if (useOptions.footer === true && $this[0].querySelector('tfoot') === null) {
+
+                    var tfoot = document.createElement("tfoot");
+                    var tr = document.createElement("tr");
+                    for (var i = 0, len = settings.columns.length; i < len; i++) {
+                        var th = document.createElement("th");
+                        tr.appendChild(th);
+                    }
+                    tfoot.appendChild(tr);
+                    $this[0].appendChild(tfoot);
+                }
+
                 $this.DataTable(settings);
-                setTimeout(function(){ fnAdjustColumnSizing(); }, 250);
+                setTimeout(function () { fnAdjustColumnSizing(); }, 350);
                 adjustEvent();
             }
             function redraw(complete) {
@@ -130,10 +143,10 @@
                 obj.draw = obj.draw === true ? true : false;
                 var cell = $this.dataTable().api(true).cell(obj.x, obj.y);
 
-                if ( obj.data !== undefined ){
-                    
+                if (obj.data !== undefined) {
+
                     cell.data(obj.data).draw(obj.draw);
-                }else{
+                } else {
                     return cell.data();
                 }
             }
@@ -163,7 +176,7 @@
                 if (isNaN(val)) {
 
                     var dataEleObj = target === 'row' ? $this.DataTable().rows().data()
-                    : target === 'col' ? $this.DataTable().columns().data() : [];
+                        : target === 'col' ? $this.DataTable().columns().data() : [];
                     var arrRes = [];
                     for (var i = 0, len = dataEleObj.length; i < len; i++) {
                         arrRes.push(dataEleObj[i]);
@@ -171,7 +184,7 @@
                     return arrRes;
                 } else {
                     return target === 'row' ? $this.DataTable().row(val).data()
-                    : target === 'col' ? $this.DataTable().column(val).data() : [];
+                        : target === 'col' ? $this.DataTable().column(val).data() : [];
                 }
             }
             function suma(data) {
@@ -180,8 +193,8 @@
                 var target = $.isPlainObject(data) ? 'obj' : Array.isArray(data) ? 'arr' : null;
                 var len = target === 'obj' ? Object.keys(data).length : target === 'arr' ? data.length : 0;
 
-                for ( var i = 0; i < len; i++ ){
-                    acumulador += parseFloat(data[target === 'obj' ? Object.keys(data)[i] : target === 'arr' ? i : i ]) || 0;
+                for (var i = 0; i < len; i++) {
+                    acumulador += parseFloat(data[target === 'obj' ? Object.keys(data)[i] : target === 'arr' ? i : i]) || 0;
                 }
                 return acumulador;
             }
@@ -189,18 +202,18 @@
 
                 var val = Number.parseInt(id);
                 var len = target === 'row' ? $this.DataTable().rows()[0].length
-                : target === 'col' ? $this.DataTable().columns()[0].length : 0;
+                    : target === 'col' ? $this.DataTable().columns()[0].length : 0;
 
                 if (!Number.isNaN(val) && val < len) {
 
                     return Number.parseFloat(suma(target === 'row' ? $this.DataTable().rows(val).data()[0]
-                    : target === 'col' ? $this.DataTable().columns(val).data()[0] : [])).toFixed(3);
+                        : target === 'col' ? $this.DataTable().columns(val).data()[0] : [])).toFixed(3);
                 } else {
 
                     var arrSum = new Array;
                     for (var i = 0; i < len; i++) {
                         arrSum.push(Number.parseFloat(suma(target === 'row' ? $this.DataTable().rows(i).data()[0]
-                        : target === 'col' ? $this.DataTable().columns(i).data()[0] : [])).toFixed(3));
+                            : target === 'col' ? $this.DataTable().columns(i).data()[0] : [])).toFixed(3));
                     }
                     return arrSum;
                 }
@@ -277,7 +290,8 @@
                     '    callback: function(row, data, index){   // Accion del evento\n' +
                     '\n' +
                     '    },\n' +
-                    ' className: "table-responsive wrap etc"     // Clases? (default: "table nowrap")\n\n' +
+                    ' className: "table-responsive wrap etc",    // Clases? (default: "table nowrap")\n' +
+                    ' footer: true                               // Generar "tfoot"? (default: "false")\n\n' +
                     ' Estructura de "<div>": \n\n' +
                     ' div.usedatatable-top\n' +
                     ' div.usedatatable-header\n' +
@@ -293,7 +307,7 @@
                     return help();
                 default:
                 case "draw":
-                    if (currentSettings > 0 && Object.keys(options).length === 0) {
+                    if (Object.keys(options).length === 0 && isInit === true) {
                         return redraw();
                     } else {
                         return draw(settings);
@@ -324,10 +338,9 @@
                     return cell(param);
                 case "settings":
                     return config();
-
             }
         };
         $.fn.useDataTable = useDataTable;
-        $.fn.useDataTable.version = "1.0.13";
+        $.fn.useDataTable.version = "1.0.14";
         return $.fn.useDataTable;
     }));

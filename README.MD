@@ -35,7 +35,8 @@ selection: {
     callback: function(row, data, index){   // Accion del evento
 
     },
- className: "table-responsive wrap etc"     // Clases? (default: "table nowrap")
+ className: "table-responsive wrap etc",    // Clases? (default: "table nowrap")
+ footer: true                               // Generar "tfoot"? (default: "false")
 
  Estructura de "<div>": 
 

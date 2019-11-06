@@ -1,7 +1,7 @@
 {
   "name": "usedatatables",
-  "version": "1.0.13",
-  "description": "Usar DataTables(https://datatables.net/) nunca fue tan facil",
+  "version": "1.0.14",
+  "description": "Simplifica el uso de JQuery DataTables(https://datatables.net/) e incorpora funcionalidades extras.",
   "main": "usedatatables.js",
   "directories": {
     "example": "example"
@@ -14,8 +14,8 @@
     "url": "git+https://github.com/yoet92/useDataTables.git"
   },
   "keywords": [
-    "DataTable",
-    "useDataTable"
+    "DataTables",
+    "useDataTables"
   ],
   "author": "Tony Duran",
   "license": "MIT",
