@@ -74,7 +74,7 @@
         };
 
         var useOptions = $.extend(
-            {},
+            true,
             {
                 selection: {
                     enabled: false,
@@ -85,12 +85,16 @@
                     callback: new Function()
                 },
                 className: 'table',
-                footer: false
+                footer: false,
+                edit: {
+                    enabled: false,
+                    type: 'dblclick'
+                }
             },
             options.use ? options.use : {}
         );
 
-        var settings = $.extend({}, defaults, options);
+        var settings = $.extend(true, defaults, options);
 
         function fnAdjustColumnSizing() {
             $this
@@ -136,7 +140,7 @@
             obj.x = obj.x || 0;
             obj.y = obj.y || 0;
             obj.data = obj.data || undefined;
-            obj.draw = obj.draw === true ? true : false;
+            obj.draw = obj.draw === true;
             var cell = $this
                 .dataTable()
                 .api(true)
@@ -284,11 +288,6 @@
         }
 
         if (useOptions.selection.enabled === true) {
-            useOptions.selection.type = useOptions.selection.type || 'click';
-            useOptions.selection.cursor = useOptions.selection.cursor || 'default';
-            useOptions.selection.background = useOptions.selection.background || 'none';
-            useOptions.selection.color = useOptions.selection.color || 'none';
-
             $this.on(useOptions.selection.type, 'tr', function() {
                 var row = $this.DataTable().row(this);
                 var data = row.data();
@@ -297,14 +296,48 @@
                     useOptions.selection.callback.call(this, row, data, index);
             });
             $this.on('mouseenter', 'tr', function() {
-                this.style.cursor = useOptions.selection.cursor;
-                this.style.backgroundColor = useOptions.selection.background;
-                this.style.color = useOptions.selection.color;
+                if (useOptions.selection.cursor !== 'default')
+                    this.style.cursor = useOptions.selection.cursor;
+                if (useOptions.selection.background !== 'none')
+                    this.style.backgroundColor = useOptions.selection.background;
+                if (useOptions.selection.color !== 'none')
+                    this.style.color = useOptions.selection.color;
             });
             $this.on('mouseleave', 'tr', function() {
-                this.style.cursor = 'default';
-                this.style.backgroundColor = '';
-                this.style.color = '';
+                if (useOptions.selection.cursor !== 'default') this.style.cursor = 'default';
+                if (useOptions.selection.background !== 'none') this.style.backgroundColor = '';
+                if (useOptions.selection.color !== 'none') this.style.color = '';
+            });
+        }
+
+        if (useOptions.edit.enabled === true) {
+            $this.on(useOptions.edit.type, 'td', function() {
+                var currentCell = $this.DataTable().cell(this);
+                var col = currentCell[0][0].column;
+                var row = currentCell[0][0].row;
+                var $cell = $(this);
+                var id = $this.attr('id');
+                $cell.html(
+                    '<input id="tabla_' +
+                        id +
+                        '_col' +
+                        col +
+                        '_row' +
+                        row +
+                        '" class="form-control" type="text" value="' +
+                        currentCell.data() +
+                        '"/>'
+                );
+                $('#tabla_' + id + '_col' + col + '_row' + row).off('blur');
+                $('#tabla_' + id + '_col' + col + '_row' + row).on('blur', function() {
+                    $this
+                        .DataTable()
+                        .cell($cell)
+                        .data(this.value);
+                    $cell.html(this.value);
+                });
+
+                $('#tabla_' + id + '_col' + col + '_row' + row).focus();
             });
         }
 
@@ -334,16 +367,20 @@
                 '}\n' +
                 '...\n\n' +
                 'selection: {\n' +
-                '    enabled: true,                          // On/Off (default: "false")\n' +
+                '    enabled: true,                          // on/off (default: "false")\n' +
                 '    type: "click",                          // Evento? (default: "click")\n' +
                 '    cursor: "default",                      // Cursor? (default: "default")\n' +
                 '    color: "white",                         // Color? (default: "none")\n' +
                 '    background: "black",                    // Background? (default: "none")\n' +
                 '    callback: function(row, data, index){   // Accion del evento\n' +
                 '\n' +
-                '    },\n' +
-                ' className: "table-responsive wrap etc",    // Clases? (default: "table nowrap")\n' +
-                ' footer: true                               // Generar "tfoot"? (default: "false")\n\n' +
+                '    },\n\n' +
+                'className: "table-responsive nowrap etc",  // Clases? (default: "table")\n\n' +
+                'footer: true,                              // Crear "tfoot"? (default: "false")\n\n' +
+                'edit: {\n' +
+                '     enabled: true,                        // on/off editar (default: "false")\n' +
+                '     type: "dblclick"                      // Evento? (default: "dblclick")\n' +
+                '}\n\n' +
                 ' Estructura de "<div>": \n\n' +
                 ' div.usedatatable-top\n' +
                 ' div.usedatatable-header\n' +
@@ -394,6 +431,6 @@
         }
     };
     $.fn.useDataTable = useDataTable;
-    $.fn.useDataTable.version = '1.0.15';
+    $.fn.useDataTable.version = '1.0.16';
     return $.fn.useDataTable;
 });
