@@ -1,8 +1,8 @@
 {
     "name": "usedatatables",
-    "version": "1.0.16",
+    "version": "1.0.17",
     "description": "Simplifica el uso de JQuery DataTables(https://datatables.net/) e incorpora funcionalidades extras.",
-    "main": "usedatatables.js",
+    "main": "useDataTables.js",
     "directories": {
         "example": "example"
     },

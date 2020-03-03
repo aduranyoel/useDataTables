@@ -27,7 +27,7 @@ use: {
 ...
 
 selection: {
-    enabled: true,                          // On/Off (default: "false")
+    enabled: true,                          // on/off (default: "false")
     type: "click",                          // Evento? (default: "click")
     cursor: "default",                      // Cursor? (default: "default")
     color: "white",                         // Color? (default: "none")
@@ -35,8 +35,15 @@ selection: {
     callback: function(row, data, index){   // Accion del evento
 
     },
- className: "table-responsive wrap etc",    // Clases? (default: "table nowrap")
- footer: true                               // Generar "tfoot"? (default: "false")
+
+className: "table-responsive nowrap etc",  // Clases? (default: "table")
+
+footer: true,                              // Crear "tfoot"? (default: "false")
+
+edit: {
+     enabled: true,                        // on/off editar (default: "false")
+     type: "dblclick"                      // Evento? (default: "dblclick")
+}
 
  Estructura de "<div>": 
 

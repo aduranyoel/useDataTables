@@ -1,12 +1,12 @@
-(function(factory) {
+(function (factory) {
     'use strict';
 
     if (typeof define === 'function' && define.amd) {
-        define(['jquery'], function($) {
+        define(['jquery'], function ($) {
             return factory($, window, document);
         });
     } else if (typeof exports === 'object') {
-        module.exports = function(root, $) {
+        module.exports = function (root, $) {
             if (!root) {
                 root = window;
             }
@@ -20,10 +20,10 @@
     } else {
         factory(jQuery, window, document);
     }
-})(function($, window, document, undefined) {
+})(function ($, window, document, undefined) {
     'use strict';
 
-    var useDataTable = function(action, param, options) {
+    var useDataTable = function (action, param, options) {
         if ($.fn.DataTable === undefined)
             throw new Error(
                 'NO SE ENCUENTRA "jQuery.fn.DataTable". PUEDE DESCARGARLO EN "https://datatables.net/"'
@@ -49,8 +49,7 @@
             responsive: true,
             colReorder: false,
             fixedHeader: false,
-            dom:
-                "<'usedatatable-top'>lfr<'usedatatable-header'>t<'usedatatable-footer'>ip<'usedatatable-bottom'>",
+            dom: "<'usedatatable-top'>lfr<'usedatatable-header'>t<'usedatatable-footer'>ip<'usedatatable-bottom'>",
             selection: false,
             bPaginate: false,
             paging: false,
@@ -97,12 +96,10 @@
         var settings = $.extend(true, defaults, options);
 
         function fnAdjustColumnSizing() {
-            $this
-                .dataTable()
-                .api(true)
-                .columns.adjust();
+            $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
         }
         function adjustEvent() {
+            $(window).off('resize');
             $(window).on('resize', fnAdjustColumnSizing);
         }
         function draw(settings) {
@@ -124,7 +121,7 @@
             }
 
             $this.DataTable(settings);
-            setTimeout(function() {
+            setTimeout(function () {
                 fnAdjustColumnSizing();
             }, 350);
             adjustEvent();
@@ -169,13 +166,13 @@
             if (Array.isArray(row) || $.isPlainObject(row)) {
                 Array.isArray(row) && (Array.isArray(row[0]) || $.isPlainObject(row[0]))
                     ? $this
-                          .DataTable()
-                          .rows.add(row)
-                          .draw()
+                        .DataTable()
+                        .rows.add(row)
+                        .draw()
                     : $this
-                          .DataTable()
-                          .row.add(row)
-                          .draw();
+                        .DataTable()
+                        .row.add(row)
+                        .draw();
             }
         }
         function getData(id, target) {
@@ -184,15 +181,15 @@
                 var dataEleObj =
                     target === 'row'
                         ? $this
-                              .DataTable()
-                              .rows()
-                              .data()
+                            .DataTable()
+                            .rows()
+                            .data()
                         : target === 'col'
-                        ? $this
-                              .DataTable()
-                              .columns()
-                              .data()
-                        : [];
+                            ? $this
+                                .DataTable()
+                                .columns()
+                                .data()
+                            : [];
                 var arrRes = [];
                 for (var i = 0, len = dataEleObj.length; i < len; i++) {
                     arrRes.push(dataEleObj[i]);
@@ -201,15 +198,15 @@
             } else {
                 return target === 'row'
                     ? $this
-                          .DataTable()
-                          .row(val)
-                          .data()
+                        .DataTable()
+                        .row(val)
+                        .data()
                     : target === 'col'
-                    ? $this
-                          .DataTable()
-                          .column(val)
-                          .data()
-                    : [];
+                        ? $this
+                            .DataTable()
+                            .column(val)
+                            .data()
+                        : [];
             }
         }
         function suma(data) {
@@ -232,23 +229,23 @@
                 target === 'row'
                     ? $this.DataTable().rows()[0].length
                     : target === 'col'
-                    ? $this.DataTable().columns()[0].length
-                    : 0;
+                        ? $this.DataTable().columns()[0].length
+                        : 0;
 
             if (!Number.isNaN(val) && val < len) {
                 return Number.parseFloat(
                     suma(
                         target === 'row'
                             ? $this
-                                  .DataTable()
-                                  .rows(val)
-                                  .data()[0]
+                                .DataTable()
+                                .rows(val)
+                                .data()[0]
                             : target === 'col'
-                            ? $this
-                                  .DataTable()
-                                  .columns(val)
-                                  .data()[0]
-                            : []
+                                ? $this
+                                    .DataTable()
+                                    .columns(val)
+                                    .data()[0]
+                                : []
                     )
                 ).toFixed(3);
             } else {
@@ -259,15 +256,15 @@
                             suma(
                                 target === 'row'
                                     ? $this
-                                          .DataTable()
-                                          .rows(i)
-                                          .data()[0]
+                                        .DataTable()
+                                        .rows(i)
+                                        .data()[0]
                                     : target === 'col'
-                                    ? $this
-                                          .DataTable()
-                                          .columns(i)
-                                          .data()[0]
-                                    : []
+                                        ? $this
+                                            .DataTable()
+                                            .columns(i)
+                                            .data()[0]
+                                        : []
                             )
                         ).toFixed(3)
                     );
@@ -288,14 +285,14 @@
         }
 
         if (useOptions.selection.enabled === true) {
-            $this.on(useOptions.selection.type, 'tr', function() {
+            $this.on(useOptions.selection.type, 'tr', function () {
                 var row = $this.DataTable().row(this);
                 var data = row.data();
                 var index = row.index();
                 if (typeof useOptions.selection.callback === 'function')
                     useOptions.selection.callback.call(this, row, data, index);
             });
-            $this.on('mouseenter', 'tr', function() {
+            $this.on('mouseenter', 'tr', function () {
                 if (useOptions.selection.cursor !== 'default')
                     this.style.cursor = useOptions.selection.cursor;
                 if (useOptions.selection.background !== 'none')
@@ -303,7 +300,7 @@
                 if (useOptions.selection.color !== 'none')
                     this.style.color = useOptions.selection.color;
             });
-            $this.on('mouseleave', 'tr', function() {
+            $this.on('mouseleave', 'tr', function () {
                 if (useOptions.selection.cursor !== 'default') this.style.cursor = 'default';
                 if (useOptions.selection.background !== 'none') this.style.backgroundColor = '';
                 if (useOptions.selection.color !== 'none') this.style.color = '';
@@ -311,7 +308,7 @@
         }
 
         if (useOptions.edit.enabled === true) {
-            $this.on(useOptions.edit.type, 'td', function() {
+            $this.on(useOptions.edit.type, 'td', function () {
                 var currentCell = $this.DataTable().cell(this);
                 var col = currentCell[0][0].column;
                 var row = currentCell[0][0].row;
@@ -319,17 +316,17 @@
                 var id = $this.attr('id');
                 $cell.html(
                     '<input id="tabla_' +
-                        id +
-                        '_col' +
-                        col +
-                        '_row' +
-                        row +
-                        '" class="form-control" type="text" value="' +
-                        currentCell.data() +
-                        '"/>'
+                    id +
+                    '_col' +
+                    col +
+                    '_row' +
+                    row +
+                    '" class="form-control" type="text" value="' +
+                    currentCell.data() +
+                    '"/>'
                 );
                 $('#tabla_' + id + '_col' + col + '_row' + row).off('blur');
-                $('#tabla_' + id + '_col' + col + '_row' + row).on('blur', function() {
+                $('#tabla_' + id + '_col' + col + '_row' + row).on('blur', function () {
                     $this
                         .DataTable()
                         .cell($cell)
@@ -431,6 +428,6 @@
         }
     };
     $.fn.useDataTable = useDataTable;
-    $.fn.useDataTable.version = '1.0.16';
+    $.fn.useDataTable.version = '1.0.17';
     return $.fn.useDataTable;
 });
